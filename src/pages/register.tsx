@@ -58,7 +58,7 @@ const Register = () => {
           onSubmit={handleSubmit(handleFormSubmit)}
         >
           <div>
-            <label className="font-mono" htmlFor="username">
+            <label className="font-mono" htmlFor="name">
               Name
             </label>
             <Input
@@ -70,7 +70,7 @@ const Register = () => {
             />
             {errors.name && <ErrorMessage message={errors.name.message} />}
 
-            <label className="font-mono" htmlFor="username">
+            <label className="font-mono" htmlFor="email">
               Email address
             </label>
             <Input
