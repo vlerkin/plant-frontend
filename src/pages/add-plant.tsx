@@ -2,6 +2,7 @@ import ErrorMessage from "@/components/error";
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LightEnum, LocationEnum } from "@/interfaces/plant_interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -9,44 +10,12 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-enum Light {
-  fullSun = "full sun",
-  partShad = "partial shadow",
-  fullShad = "full shadow",
-}
-
-const LightEnum = z.nativeEnum(Light);
-
-enum Location {
-  south = "south",
-  north = "north",
-  east = "east",
-  west = "west",
-  southEast = "south_east",
-  southWest = "south_west",
-  nothEast = "north_east",
-  northWest = "north_west",
-}
-
-const LocationEnum = z.nativeEnum(Location);
-/*
-interface FormInput {
-  name: String;
-  watering: Number;
-  volume: Number;
-  light: Light;
-  location: Location | null;
-  species: String | null;
-  comment: String | null;
-  photo: String | null;
-}
-*/
 const checkFormData = z.object({
   name: z.string().max(100),
   watering: z.number().int().gte(0).lte(366),
   volume: z.number().gte(0).lte(1000),
   light: LightEnum,
-  location: LocationEnum.nullable(),
+  location: LocationEnum,
   species: z.string().max(100).nullable(),
   comment: z.string().max(500).nullable(),
   photo: z.object({}),
