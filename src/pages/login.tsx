@@ -43,7 +43,7 @@ const Login = () => {
     <main className="bg-[#57886C] h-screen">
       <div className="bg-[url('/plant.jpg')] h-80 bg-center bg-no-repeat bg-cover md:h-80 max-sm:h-[40%] flex items-center justify-center rounded-br-2xl rounded-bl-2xl">
         <NavBar />
-        <h1 className="font-mono font-bold text-4xl drop-shadow-2xl text-white -mt-8 max-sm:text-xl">
+        <h1 className="font-mono font-bold text-4xl drop-shadow-2xl text-white -mt-8 max-sm:text-2xl">
           Login
         </h1>
       </div>
