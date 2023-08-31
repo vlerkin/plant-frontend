@@ -57,28 +57,43 @@ const MyPlants = () => {
           My Plants
         </h1>
       </div>
-      <div>
-        <Button className="mt-4 font-mono">Add New Plant</Button>
-        <Button className="mt-4 font-mono">Share My Plants</Button>
+      <div className="flex items-center justify-between mx-8">
+        <div>
+          <button className="mt-4 font-mono">All Plants</button>
+          <button className="mt-4 font-mono">Thirsty Plants</button>
+        </div>
+        <div>
+          <Button className="mt-4 font-mono">Add New Plant</Button>
+          <Button className="mt-4 font-mono">Share My Plants</Button>
+        </div>
       </div>
-      <div>
+      <div className="grid grid-cols-4 gap-4 max-sm:grid-cols-2 overflow-scroll m-8">
         {myPlants.length === 0 && <p>You have no plants yet</p>}
         {myPlants.map((aPlant) => {
           return (
-            <div key={aPlant.id}>
-              <div></div>
-              <p>{aPlant.name}</p>
-              <p>
-                You water this plant every {aPlant.howOftenWatering}{" "}
-                {aPlant.howOftenWatering === 1 ? (
-                  <span> day</span>
-                ) : (
-                  <span> days</span>
-                )}{" "}
-                with {aPlant.waterVolume} l of water
-              </p>
-              {aPlant.is_healthy ? <p>Healthy</p> : <p>Sick</p>}
-              {aPlant.time_to_water && <p>Needs water</p>}
+            <div key={aPlant.id} className="col-span-2 flex max-sm:min-h-[60%]">
+              {aPlant.photo ? (
+                <div
+                  className="bg-center bg-no-repeat bg-cover w-60 h-60 max-sm:w-[50%] max-sm:h-[100%]"
+                  style={{ backgroundImage: `url(${aPlant.photo})` }}
+                ></div>
+              ) : (
+                <div className="bg-[url('/template.jpg')] bg-center bg-no-repeat bg-cover w-60 h-60 max-sm:w-[50%] max-sm:h-[100%]"></div>
+              )}
+              <div>
+                <p>{aPlant.name}</p>
+                <p>
+                  You water this plant every {aPlant.howOftenWatering}{" "}
+                  {aPlant.howOftenWatering === 1 ? (
+                    <span> day</span>
+                  ) : (
+                    <span> days</span>
+                  )}{" "}
+                  with {aPlant.waterVolume} l of water
+                </p>
+                {aPlant.is_healthy ? <p>Healthy</p> : <p>Sick</p>}
+                {aPlant.time_to_water && <p>Needs water</p>}
+              </div>
             </div>
           );
         })}
