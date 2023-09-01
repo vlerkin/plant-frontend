@@ -62,13 +62,17 @@ const MyPlants = () => {
         <div className="flex justify-center items-center flex-col md:flex-row lg:flex-row">
           <button
             onClick={() => setFilterState(false)}
-            className="m-4 text-sm font-mono border-dashed border-neutral-50 border-[1px] p-2 rounded-md text-neutral-50 hover:backdrop-blur-md hover:bg-gray-900/10"
+            className={`m-4 text-sm font-mono border-dashed border-neutral-50 border-[1px] p-2 rounded-md text-neutral-50 hover:backdrop-blur-md hover:bg-gray-900/10 ${
+              filterState === false && "bg-sky-100/20 text-white"
+            }`}
           >
             All Plants
           </button>
           <button
             onClick={() => setFilterState(true)}
-            className="m-4 text-sm font-mono border-dashed border-neutral-50 border-[1px] p-2 rounded-md text-neutral-50 hover:backdrop-blur-md hover:bg-gray-900/10"
+            className={`m-4 text-sm font-mono border-dashed border-neutral-50 border-[1px] p-2 rounded-md text-neutral-50 hover:backdrop-blur-md hover:bg-gray-900/10 ${
+              filterState === true && "bg-sky-100/20 text-white"
+            }`}
           >
             Thirsty Plants
           </button>
@@ -84,51 +88,55 @@ const MyPlants = () => {
             You have no plants yet
           </p>
         )}
-        {myPlants.map((aPlant) => {
-          return (
-            <div
-              key={aPlant.id}
-              className="col-span-2 flex min-h-[60%] backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative"
-            >
-              {aPlant.photo ? (
-                <div
-                  className="bg-center rounded-l-md bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"
-                  style={{ backgroundImage: `url(${aPlant.photo})` }}
-                ></div>
-              ) : (
-                <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"></div>
-              )}
-              <div className="flex flex-col justify-around ml-4 p-2">
-                <span className="inline font-semibold md:text-xl">
-                  {aPlant.name}
-                </span>{" "}
-                {aPlant.is_healthy && (
-                  <img
-                    className="w-6 h-6 inline absolute -top-1.5 -right-1.5 backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
-                    src="/leaf.svg"
-                    alt="leaf icon -  healthy"
-                  />
+        {myPlants
+          .filter(
+            (aPlant) => aPlant.time_to_water === true || filterState === false
+          )
+          .map((aPlant) => {
+            return (
+              <div
+                key={aPlant.id}
+                className="col-span-2 flex min-h-[60%] backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative"
+              >
+                {aPlant.photo ? (
+                  <div
+                    className="bg-center rounded-l-md bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"
+                    style={{ backgroundImage: `url(${aPlant.photo})` }}
+                  ></div>
+                ) : (
+                  <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"></div>
                 )}
-                <p>
-                  Watering every {aPlant.howOftenWatering}{" "}
-                  {aPlant.howOftenWatering === 1 ? (
-                    <span> day</span>
-                  ) : (
-                    <span> days</span>
-                  )}{" "}
-                  with {aPlant.waterVolume} l of water
-                </p>
-                {aPlant.time_to_water && (
-                  <img
-                    className="w-6 h-6 inline absolute -top-1.5 right-[18px] backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
-                    src="/drop.svg"
-                    alt="leaf icon -  healthy"
-                  />
-                )}
+                <div className="flex flex-col justify-around ml-4 p-2">
+                  <span className="inline font-semibold md:text-xl">
+                    {aPlant.name}
+                  </span>{" "}
+                  {aPlant.is_healthy && (
+                    <img
+                      className="w-6 h-6 inline absolute -top-1.5 -right-1.5 backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
+                      src="/leaf.svg"
+                      alt="leaf icon -  healthy"
+                    />
+                  )}
+                  <p>
+                    Watering every {aPlant.howOftenWatering}{" "}
+                    {aPlant.howOftenWatering === 1 ? (
+                      <span> day</span>
+                    ) : (
+                      <span> days</span>
+                    )}{" "}
+                    with {aPlant.waterVolume} l of water
+                  </p>
+                  {aPlant.time_to_water && (
+                    <img
+                      className="w-6 h-6 inline absolute -top-1.5 right-[18px] backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
+                      src="/drop.svg"
+                      alt="leaf icon -  healthy"
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </main>
   );
