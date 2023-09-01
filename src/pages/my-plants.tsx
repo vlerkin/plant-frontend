@@ -34,7 +34,7 @@ const MyPlants = () => {
       router.push("/login");
       return;
     }
-    const getItemsFromApi = async (token: string) => {
+    const getPlantsFromApi = async (token: string) => {
       const response = await axios.get("http://localhost:8000/my-plants", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -45,7 +45,7 @@ const MyPlants = () => {
         console.log(parsedResponse.error.flatten());
       }
     };
-    getItemsFromApi(token);
+    getPlantsFromApi(token);
   }, []);
   if (!myPlants) {
     return <p>Loading...</p>;
@@ -78,7 +78,12 @@ const MyPlants = () => {
           </button>
         </div>
         <div className=" flex justify-center items-center flex-col md:flex-row lg:flex-row">
-          <Button className="m-4 font-mono">Add New Plant</Button>
+          <Button
+            onClick={() => router.push("/add-plant")}
+            className="m-4 font-mono"
+          >
+            Add New Plant
+          </Button>
           <Button className="m-4 font-mono">Share My Plants</Button>
         </div>
       </div>
