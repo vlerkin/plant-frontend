@@ -41,15 +41,15 @@ const Login = () => {
 
   return (
     <main className="bg-[#57886C] h-screen">
-      <div className="bg-[url('/plant.jpg')] h-80 bg-center bg-no-repeat bg-cover md:h-80 max-sm:h-[40%] flex items-center justify-center rounded-br-2xl rounded-bl-2xl">
+      <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
         <NavBar />
-        <h1 className="font-mono font-bold text-4xl drop-shadow-2xl text-white -mt-8 max-sm:text-2xl">
+        <h1 className="font-mono -mb-4 font-bold text-xl drop-shadow-2xl text-white -mt-2 md:-mt-8 lg:-mt-8 md:text-4xl lg:text-4xl">
           Login
         </h1>
       </div>
       <div className="flex justify-center items-center">
         <form
-          className="w-1/3 -mt-20 backdrop-blur-md bg-gray-900/10 p-6 rounded-md text-white max-sm:w-4/5"
+          className="-mt-10 mb-10 backdrop-blur-md bg-gray-900/10 p-6 rounded-md text-white w-4/5 md:-mt-20 lg:-mt-20 md:w-1/3"
           onSubmit={handleSubmit(handleFormSubmit)}
         >
           <div>

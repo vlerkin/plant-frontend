@@ -27,6 +27,7 @@ const ArrayDataApi = z.array(checkMyPlants);
 const MyPlants = () => {
   const router = useRouter();
   const [myPlants, setMyPlants] = useState<MyPlant[] | null>(null);
+  const [filterState, setFilterState] = useState<boolean>(false);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token === null) {
@@ -50,40 +51,66 @@ const MyPlants = () => {
     return <p>Loading...</p>;
   }
   return (
-    <main>
-      <div className="bg-[url('/plant.jpg')] h-80 bg-center bg-no-repeat bg-cover md:h-80 max-sm:h-[40%] flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
+    <main className="bg-[#57886C] bg-repeat-y min-h-screen">
+      <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
         <NavBar />
-        <h1 className="font-mono font-bold text-4xl drop-shadow-2xl text-white -mt-8 max-sm:text-2xl">
+        <h1 className="font-mono -mb-12 font-bold text-xl drop-shadow-2xl text-white md:-mb-4 lg:-md-4 md:text-4xl lg:text-4xl">
           My Plants
         </h1>
       </div>
-      <div className="flex items-center justify-between mx-8">
-        <div>
-          <button className="mt-4 font-mono">All Plants</button>
-          <button className="mt-4 font-mono">Thirsty Plants</button>
+      <div className="flex mx-8 mt-4 items-center justify-between">
+        <div className="flex justify-center items-center flex-col md:flex-row lg:flex-row">
+          <button
+            onClick={() => setFilterState(false)}
+            className="m-4 text-sm font-mono border-dashed border-neutral-50 border-[1px] p-2 rounded-md text-neutral-50 hover:backdrop-blur-md hover:bg-gray-900/10"
+          >
+            All Plants
+          </button>
+          <button
+            onClick={() => setFilterState(true)}
+            className="m-4 text-sm font-mono border-dashed border-neutral-50 border-[1px] p-2 rounded-md text-neutral-50 hover:backdrop-blur-md hover:bg-gray-900/10"
+          >
+            Thirsty Plants
+          </button>
         </div>
-        <div>
-          <Button className="mt-4 font-mono">Add New Plant</Button>
-          <Button className="mt-4 font-mono">Share My Plants</Button>
+        <div className=" flex justify-center items-center flex-col md:flex-row lg:flex-row">
+          <Button className="m-4 font-mono">Add New Plant</Button>
+          <Button className="m-4 font-mono">Share My Plants</Button>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-4 max-sm:grid-cols-2 overflow-scroll m-8">
-        {myPlants.length === 0 && <p>You have no plants yet</p>}
+      <div className="grid gap-4 grid-cols-2 overflow-scroll p-10 md:grid-cols-4 md:gap-8 font-mono">
+        {myPlants.length === 0 && (
+          <p className="col-span-2 col-start-2 text-center">
+            You have no plants yet
+          </p>
+        )}
         {myPlants.map((aPlant) => {
           return (
-            <div key={aPlant.id} className="col-span-2 flex max-sm:min-h-[60%]">
+            <div
+              key={aPlant.id}
+              className="col-span-2 flex min-h-[60%] backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative"
+            >
               {aPlant.photo ? (
                 <div
-                  className="bg-center bg-no-repeat bg-cover w-60 h-60 max-sm:w-[50%] max-sm:h-[100%]"
+                  className="bg-center rounded-l-md bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"
                   style={{ backgroundImage: `url(${aPlant.photo})` }}
                 ></div>
               ) : (
-                <div className="bg-[url('/template.jpg')] bg-center bg-no-repeat bg-cover w-60 h-60 max-sm:w-[50%] max-sm:h-[100%]"></div>
+                <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"></div>
               )}
-              <div>
-                <p>{aPlant.name}</p>
+              <div className="flex flex-col justify-around ml-4 p-2">
+                <span className="inline font-semibold md:text-xl">
+                  {aPlant.name}
+                </span>{" "}
+                {aPlant.is_healthy && (
+                  <img
+                    className="w-6 h-6 inline absolute -top-1.5 -right-1.5 backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
+                    src="/leaf.svg"
+                    alt="leaf icon -  healthy"
+                  />
+                )}
                 <p>
-                  You water this plant every {aPlant.howOftenWatering}{" "}
+                  Watering every {aPlant.howOftenWatering}{" "}
                   {aPlant.howOftenWatering === 1 ? (
                     <span> day</span>
                   ) : (
@@ -91,8 +118,13 @@ const MyPlants = () => {
                   )}{" "}
                   with {aPlant.waterVolume} l of water
                 </p>
-                {aPlant.is_healthy ? <p>Healthy</p> : <p>Sick</p>}
-                {aPlant.time_to_water && <p>Needs water</p>}
+                {aPlant.time_to_water && (
+                  <img
+                    className="w-6 h-6 inline absolute -top-1.5 right-[18px] backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
+                    src="/drop.svg"
+                    alt="leaf icon -  healthy"
+                  />
+                )}
               </div>
             </div>
           );

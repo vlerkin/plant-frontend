@@ -34,13 +34,13 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="pt-2 font-mono text-white fixed top-0 w-screen z-[10] flex justify-between">
+    <nav className="py-2 font-mono text-white fixed top-0 w-screen z-[10] flex justify-between items-center backdrop-blur-md bg-gray-900/10">
       <NavigationSection className="mx-2.5" href="/" text="PlantieCare" />
       {token ? (
         <div>
           <NavigationSection
             className="mx-2.5"
-            href="/progress"
+            href="/my-plants"
             text="My Plants"
           />
           <button

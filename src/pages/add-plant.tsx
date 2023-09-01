@@ -74,22 +74,21 @@ const AddPlant = () => {
 
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen">
-      <div className="bg-[url('/plant.jpg')] h-80 bg-center bg-no-repeat bg-cover md:h-80 max-sm:h-[40%] flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
+      <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
         <NavBar />
-        <h1 className="font-mono font-bold text-4xl drop-shadow-2xl text-white -mt-8 max-sm:text-2xl">
+        <h1 className="font-mono -mb-4 font-bold text-xl drop-shadow-2xl text-white -mt-2 md:-mt-8 lg:-mt-8 md:text-4xl lg:text-4xl">
           Add New Plant
         </h1>
       </div>
       <div className="flex justify-center items-center max-h-[60%]">
         <form
-          className="w-2/3 -mt-20 mb-8 backdrop-blur-md h-full bg-gray-900/10 p-6 rounded-md text-white lg:max-w-lg md:max-w-md sm:max-w-sm"
+          className="-mt-10 mb-10 backdrop-blur-md bg-gray-900/10 p-6 rounded-md text-white w-4/5 md:-mt-20 lg:-mt-20 md:w-1/2 lg:1/3"
           onSubmit={handleSubmit(handleFormSubmit)}
         >
           <div>
             <label className="font-mono" htmlFor="name">
               Give your plant a name
               <span className="text-red-600">*</span>
-              <span> (required)</span>
             </label>
             <Input
               className="mb-4 mt-2 font-mono text-black"
@@ -104,7 +103,6 @@ const AddPlant = () => {
             <label className="font-mono" htmlFor="watering">
               How often do you water your plant? (once in X days)
               <span className="text-red-600">*</span>
-              <span> (required)</span>
             </label>
             <Input
               className="mb-4 mt-2 font-mono text-black"
@@ -120,7 +118,6 @@ const AddPlant = () => {
             <label className="font-mono" htmlFor="volume">
               How much water do you use when watering? (in liters)
               <span className="text-red-600">*</span>
-              <span> (required)</span>
             </label>
             <Input
               className="mb-4 mt-2 font-mono text-black"
@@ -135,7 +132,6 @@ const AddPlant = () => {
             <label className="font-mono" htmlFor="light">
               How much light does your plant gets?
               <span className="text-red-600">*</span>
-              <span> (required)</span>
             </label>
             <select
               className="w-80 mb-4 mt-2 font-mono text-black max-sm:w-[100%] flex h-10 w-full items-center justify-between rounded-md border border-neutral-200 border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:border-neutral-800 dark:bg-neutral-950 dark:ring-offset-neutral-950 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-300"
