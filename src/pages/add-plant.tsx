@@ -2,13 +2,25 @@ import ErrorMessage from "@/components/error";
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LightEnum, LocationEnum } from "@/interfaces/plant_interfaces";
+import {
+  LightEnum,
+  LocationEnum,
+  UploadResults,
+} from "@/interfaces/plant_interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+const MAX_FILE_SIZE = 10000000;
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
 
 const checkFormData = z.object({
   name: z.string().max(100),
@@ -18,7 +30,18 @@ const checkFormData = z.object({
   location: LocationEnum,
   species: z.string().max(100).nullable(),
   comment: z.string().max(500).nullable(),
-  photo: z.object({}),
+  photo: z
+    .any()
+    .refine(
+      (files) => !files || !files[0] || files?.[0]?.size <= MAX_FILE_SIZE,
+      `Max image size is 10MB.`
+    )
+    .refine(
+      (files) =>
+        !files || !files[0] || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    )
+    .nullable(),
 });
 
 type DataFromForm = z.infer<typeof checkFormData>;
@@ -46,13 +69,30 @@ const AddPlant = () => {
     resolver: zodResolver(checkFormData),
   });
   const handleFormSubmit = async (data: DataFromForm) => {
-    console.log(data.light);
     try {
+      let photoName = null;
+      if (data.photo[0]) {
+        const res = await axios.post(
+          "http://localhost:8000/upload",
+          {
+            file: data.photo[0],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        photoName = res.data.filename;
+      }
+
       await axios.post(
         "http://localhost:8000/my-plants",
         {
           name: data.name,
-          photo: data.photo,
+          photo: photoName,
           howOftenWatering: data.watering,
           waterVolume: data.volume,
           light: data.light,
@@ -66,6 +106,7 @@ const AddPlant = () => {
           },
         }
       );
+
       router.push("/my-plants");
     } catch (error) {
       console.log("Something went wrong!");
@@ -82,6 +123,7 @@ const AddPlant = () => {
       </div>
       <div className="flex justify-center items-center max-h-[60%]">
         <form
+          encType="multipart/form-data"
           className="-mt-10 mb-10 backdrop-blur-md bg-gray-900/10 p-6 rounded-md text-white w-4/5 md:-mt-20 lg:-mt-20 md:w-1/2 lg:1/3"
           onSubmit={handleSubmit(handleFormSubmit)}
         >
@@ -206,7 +248,9 @@ const AddPlant = () => {
               id="photo"
               {...register("photo", { required: false })}
             />
-            {errors.photo && <ErrorMessage message={errors.photo.message} />}
+            {errors.photo && (
+              <ErrorMessage message={errors.photo?.message?.toString()} />
+            )}
 
             <Button className="mt-4 font-mono" type="submit">
               Add Plant

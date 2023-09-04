@@ -20,3 +20,8 @@ enum Location {
 }
 
 export const LocationEnum = z.nativeEnum(Location);
+
+export interface UploadResults {
+  filename: string;
+  user_id: number;
+}

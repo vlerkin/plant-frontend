@@ -1,3 +1,5 @@
+import { FieldError } from "react-hook-form";
+
 interface ErrorProps {
   message: string | undefined;
 }
