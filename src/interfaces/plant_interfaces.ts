@@ -15,7 +15,7 @@ enum Location {
   west = "west",
   southEast = "south_east",
   southWest = "south_west",
-  nothEast = "north_east",
+  northEast = "north_east",
   northWest = "north_west",
 }
 

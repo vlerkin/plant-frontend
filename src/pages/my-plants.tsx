@@ -13,7 +13,7 @@ const checkMyPlants = z.object({
   light: LightEnum,
   location: LocationEnum,
   species: z.string().nullable(),
-  photo: z.string().nullable(),
+  photo_url: z.string().nullable(),
   waterVolume: z.number(),
   comment: z.string().nullable(),
   userId: z.number().int(),
@@ -50,6 +50,9 @@ const MyPlants = () => {
   if (!myPlants) {
     return <p>Loading...</p>;
   }
+  const handleClickPlant = (plant_id: number) => {
+    router.push(`/my-plants/${plant_id}`);
+  };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen">
       <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
@@ -101,12 +104,13 @@ const MyPlants = () => {
             return (
               <div
                 key={aPlant.id}
-                className="col-span-2 flex min-h-[60%] backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative"
+                onClick={() => handleClickPlant(aPlant.id)}
+                className="col-span-2 flex min-h-[60%] backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative active:translate-y-2 hover:-translate-y-2 hover:cursor-pointer hover:shadow-2xl"
               >
-                {aPlant.photo ? (
+                {aPlant.photo_url ? (
                   <div
                     className="bg-center rounded-l-md bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"
-                    style={{ backgroundImage: `url(${aPlant.photo})` }}
+                    style={{ backgroundImage: `url(${aPlant.photo_url})` }}
                   ></div>
                 ) : (
                   <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"></div>
@@ -129,7 +133,7 @@ const MyPlants = () => {
                     ) : (
                       <span> days</span>
                     )}{" "}
-                    with {aPlant.waterVolume} l of water
+                    with {aPlant.waterVolume} L of water
                   </p>
                   {aPlant.time_to_water && (
                     <img

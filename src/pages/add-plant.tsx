@@ -73,7 +73,7 @@ const AddPlant = () => {
       let photoName = null;
       if (data.photo[0]) {
         const res = await axios.post(
-          "http://localhost:8000/upload",
+          "http://localhost:8000/upload/plant",
           {
             file: data.photo[0],
           },
