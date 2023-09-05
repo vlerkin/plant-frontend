@@ -61,7 +61,7 @@ const MyPlants = () => {
           My Plants
         </h1>
       </div>
-      <div className="flex mx-8 mt-4 items-center justify-between">
+      <div className="flex mx-4 mt-4 items-center justify-between">
         <div className="flex justify-center items-center flex-col md:flex-row lg:flex-row">
           <button
             onClick={() => setFilterState(false)}
@@ -81,18 +81,40 @@ const MyPlants = () => {
           </button>
         </div>
         <div className=" flex justify-center items-center flex-col md:flex-row lg:flex-row">
-          <Button
+          <button
             onClick={() => router.push("/add-plant")}
-            className="m-4 font-mono"
+            className="flex items-center m-4 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
           >
-            Add New Plant
-          </Button>
-          <Button className="m-4 font-mono">Share My Plants</Button>
+            <img
+              src="/plus.svg"
+              alt="icon of watering can"
+              className="inline h-8 w-8 md:hidden lg:hidden"
+            />
+            <img
+              src="/plant.svg"
+              alt="icon of watering can"
+              className="inline h-12 w-12 md:hidden lg:hidden"
+            />
+            <p className="text-sm hidden md:text-base md:block">Add Plant</p>
+          </button>
+          <button
+            onClick={() => router.push("/add-plant")}
+            className="m-4 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+          >
+            <img
+              src="/share.svg"
+              alt="icon of watering can"
+              className="inline h-12 w-12 md:hidden lg:hidden"
+            />
+            <p className="text-sm hidden md:text-base md:block">
+              Share My Plants
+            </p>
+          </button>
         </div>
       </div>
       <div className="grid gap-4 grid-cols-2 overflow-scroll p-10 md:grid-cols-4 md:gap-8 font-mono">
         {myPlants.length === 0 && (
-          <p className="col-span-2 col-start-2 text-center">
+          <p className="col-span-2 col-start-2 text-center text-sm md:text-base lg:text-base">
             You have no plants yet
           </p>
         )}
@@ -105,7 +127,7 @@ const MyPlants = () => {
               <div
                 key={aPlant.id}
                 onClick={() => handleClickPlant(aPlant.id)}
-                className="col-span-2 flex min-h-[60%] backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative active:translate-y-2 hover:-translate-y-2 hover:cursor-pointer hover:shadow-2xl"
+                className="col-span-2 flex min-h-[60%] text-sm backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative active:translate-y-2 hover:-translate-y-2 hover:cursor-pointer hover:shadow-2xl md:text-base lg:text-base"
               >
                 {aPlant.photo_url ? (
                   <div

@@ -21,7 +21,6 @@ const numberToMonth = {
 };
 
 const checkPlantInfo = z.object({
-  photo: z.string().nullable(),
   info: z.object({
     id: z.number().int().gte(0),
     name: z.string().max(100),
@@ -29,59 +28,49 @@ const checkPlantInfo = z.object({
     light: LightEnum,
     location: LocationEnum,
     species: z.string().nullable(),
-    photo: z.string().nullable(),
+    photo_url: z.string().nullable(),
     waterVolume: z.number(),
     comment: z.string().nullable(),
     userId: z.number().int(),
   }),
-  watering_log: z.array(
-    z
-      .object({
-        dateTime: z.string(),
-        id: z.number().int().gte(0),
-        plantId: z.number().int().gte(0),
-        waterVolume: z.number(),
-      })
-      .nullable()
-  ),
-  fertilizing_log: z.array(
-    z
-      .object({
-        type: z.string(),
-        dateTime: z.string(),
-        quantity: z.number().gte(0),
-        id: z.number().int().gte(0),
-        plantId: z.number().int().gte(0),
-      })
-      .nullable()
-  ),
-  disease_log: z.array(
-    z
-      .object({
-        diseaseId: z.number().int().gte(0),
-        id: z.number().int().gte(0),
-        startDate: z.string(),
-        comment: z.string().nullable(),
-        plantId: z.number().int().gte(0),
-        endDate: z.string(),
-        treatment: z.string().nullable(),
-      })
-      .nullable()
-  ),
+  watering_log: z
+    .object({
+      dateTime: z.string(),
+      id: z.number().int().gte(0),
+      plantId: z.number().int().gte(0),
+      waterVolume: z.number(),
+    })
+    .nullable(),
+  fertilizing_log: z
+    .object({
+      type: z.string(),
+      dateTime: z.string(),
+      quantity: z.number().gte(0),
+      id: z.number().int().gte(0),
+      plantId: z.number().int().gte(0),
+    })
+    .nullable(),
+  disease_log: z
+    .array(
+      z
+        .object({
+          disease_type: z.string(),
+          id: z.number().int().gte(0),
+          startDate: z.string(),
+          plantId: z.number().int().gte(0),
+          endDate: z.string().nullable(),
+          treatment: z.string().nullable(),
+        })
+        .nullable()
+    )
+    .nullable(),
 });
 
 type PlantInfo = z.infer<typeof checkPlantInfo>;
 
-const checkDisease = z.object({
-  id: z.number().int().gte(0),
-  type: z.string(),
-});
-type Disease = z.infer<typeof checkDisease>;
-const checkAllDiseases = z.array(checkDisease);
 const Plant = () => {
   const [token, setToken] = useState<string | null>(null);
   const [plantInfo, setPlantInfo] = useState<PlantInfo | null>(null);
-  const [allDiseases, setAllDiseases] = useState<Disease[] | null>(null);
   const router = useRouter();
   const plantId = Number(router.query.plantId);
   useEffect(() => {
@@ -111,107 +100,19 @@ const Plant = () => {
       }
     };
     getPlantInfoFromApi(token);
-    const getDiseases = async () => {
-      const response = await axios.get(`http://localhost:8000/all-diseases`);
-      const parsedResponse = checkAllDiseases.safeParse(response.data);
-      if (parsedResponse.success === true) {
-        setAllDiseases(parsedResponse.data);
-      } else {
-        console.log(parsedResponse.error.flatten());
-      }
-    };
-    getDiseases();
   }, [plantId]);
   if (!plantInfo) {
     return <p>Loading...</p>;
-  }
-  let waterDay: string | undefined = undefined;
-  if (plantInfo.watering_log && plantInfo.watering_log.length > 0) {
-    waterDay = plantInfo.watering_log[
-      plantInfo.watering_log.length - 1
-    ]?.dateTime
-      .split("T")[0]
-      .split("-")[2];
-  }
-  let waterMonth: string | undefined = undefined;
-  if (plantInfo.watering_log && plantInfo.watering_log.length > 0) {
-    const monthIndex = plantInfo.watering_log[
-      plantInfo.watering_log.length - 1
-    ]?.dateTime
-      .split("T")[0]
-      .split("-")[1] as keyof typeof numberToMonth;
-    waterMonth = numberToMonth[monthIndex];
-  }
-  let fertiliserDay: string | undefined = undefined;
-  if (plantInfo.fertilizing_log && plantInfo.fertilizing_log.length > 0) {
-    fertiliserDay = plantInfo.fertilizing_log[
-      plantInfo.fertilizing_log.length - 1
-    ]?.dateTime
-      .split("T")[0]
-      .split("-")[2];
-  }
-  let fertiliserMonth: string | undefined = undefined;
-  if (plantInfo.fertilizing_log && plantInfo.fertilizing_log.length > 0) {
-    const monthIndex = plantInfo.fertilizing_log[
-      plantInfo.fertilizing_log.length - 1
-    ]?.dateTime
-      .split("T")[0]
-      .split("-")[1] as keyof typeof numberToMonth;
-    fertiliserMonth = numberToMonth[monthIndex];
-  }
-  let fertiliserType: string | undefined = undefined;
-  let fertiliserQuantity: number | undefined = undefined;
-  if (plantInfo.fertilizing_log && plantInfo.fertilizing_log.length > 0) {
-    fertiliserType =
-      plantInfo.fertilizing_log[plantInfo.fertilizing_log.length - 1]?.type;
-    fertiliserQuantity =
-      plantInfo.fertilizing_log[plantInfo.fertilizing_log.length - 1]?.quantity;
-  }
-  let diseaseStartDay: string | undefined = undefined;
-  let diseaseStartMonth: string | undefined = undefined;
-  let diseaseEndDay: string | undefined = undefined;
-  let diseaseEndMonth: string | undefined = undefined;
-  let diseaseType: string | undefined = undefined;
-  let medications: string | undefined | null = undefined;
-  if (plantInfo.disease_log && plantInfo.disease_log.length > 0) {
-    diseaseStartDay = plantInfo.disease_log[
-      plantInfo.disease_log.length - 1
-    ]?.startDate
-      .split("T")[0]
-      .split("-")[2];
-
-    const monthStartIndex = plantInfo.disease_log[
-      plantInfo.disease_log.length - 1
-    ]?.startDate
-      .split("T")[0]
-      .split("-")[1] as keyof typeof numberToMonth;
-    diseaseStartMonth = numberToMonth[monthStartIndex];
-
-    diseaseEndDay = plantInfo.disease_log[
-      plantInfo.disease_log.length - 1
-    ]?.endDate
-      .split("T")[0]
-      .split("-")[2];
-
-    const monthEndIndex = plantInfo.disease_log[
-      plantInfo.disease_log.length - 1
-    ]?.endDate
-      .split("T")[0]
-      .split("-")[1] as keyof typeof numberToMonth;
-    diseaseEndMonth = numberToMonth[monthEndIndex];
-
-    medications =
-      plantInfo.disease_log[plantInfo.disease_log.length - 1]?.treatment;
   }
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen flex justify-center items-start font-mono">
       <NavBar />
       <div className="backdrop-blur-md bg-gray-900/10 rounded-md w-full text-white my-20 mx-4 md:w-2/5 lg:w-2/5">
         <div className="md:flex md:flex-row md:items-center">
-          {plantInfo.photo ? (
+          {plantInfo.info.photo_url ? (
             <div
               className="bg-center bg-no-repeat rounded-t-md bg-cover w-full h-48 md:rounded-full md:w-44 md:h-44 md:m-6 lg:rounded-full lg:w-44 lg:h-44 lg:m-6 "
-              style={{ backgroundImage: `url(${plantInfo.photo})` }}
+              style={{ backgroundImage: `url(${plantInfo.info.photo_url})` }}
             ></div>
           ) : (
             <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover w-full h-48"></div>
@@ -268,7 +169,7 @@ const Plant = () => {
                 alt="icon of watering can"
                 height={30}
                 width={30}
-                className="inline mr-2"
+                className="inline mr-2 pb-2"
               />
               <span className="text-sm md:text-base">
                 every {plantInfo.info.howOftenWatering}
@@ -299,69 +200,132 @@ const Plant = () => {
         <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2">
           Last actions
         </p>
-        <div className="text-sm m-4">
+        <div className="md:flex lg:flex">
           <div>
-            <img
-              src="/watercan.svg"
-              alt="icon of watering can"
-              height={45}
-              width={45}
-              className="inline"
-            ></img>
-            {plantInfo.watering_log != null &&
-            plantInfo.watering_log.length > 0 ? (
-              <p>
-                {waterMonth} {waterDay}
-              </p>
-            ) : (
-              <p>You have not watered the plant yet</p>
-            )}
-          </div>
-        </div>
-        <div className="text-sm m-4">
-          <div>
-            <img
-              src="/fertiliser.svg"
-              alt="icon of fertiliser"
-              height={40}
-              width={40}
-              className="inline"
-            ></img>
-            {plantInfo.fertilizing_log != null &&
-            plantInfo.fertilizing_log.length > 0 ? (
-              <div>
-                <p>
-                  {fertiliserMonth} {fertiliserDay}
-                </p>
-                <p>
-                  {fertiliserQuantity}g of {fertiliserType}
-                </p>
+            <div className="text-sm m-4">
+              <div className="flex items-center">
+                <img
+                  src="/watercan.svg"
+                  alt="icon of watering can"
+                  height={45}
+                  width={45}
+                  className="inline"
+                ></img>
+                {plantInfo.watering_log != null ? (
+                  <p className="ml-2">
+                    {
+                      numberToMonth[
+                        plantInfo.watering_log.dateTime
+                          .split("T")[0]
+                          .split("-")[1] as keyof typeof numberToMonth
+                      ]
+                    }{" "}
+                    {
+                      plantInfo.watering_log.dateTime
+                        .split("T")[0]
+                        .split("-")[2]
+                    }
+                  </p>
+                ) : (
+                  <p className="ml-2">You have not watered the plant yet</p>
+                )}
               </div>
-            ) : (
-              <p>You have not fertilised the plant yet</p>
-            )}
-          </div>
-        </div>
-        <div className="text-sm m-4">
-          <div>
-            <img
-              src="/medication.svg"
-              alt="icon of medications"
-              height={40}
-              width={40}
-              className="inline"
-            ></img>
-            {plantInfo.disease_log != null &&
-            plantInfo.disease_log.length > 0 ? (
-              <div>
-                <p>
-                  {diseaseStartMonth} {diseaseStartDay} - {diseaseEndMonth}{" "}
-                  {diseaseEndDay}
-                </p>
+            </div>
+            <div className="text-sm m-4">
+              <div className="flex items-center">
+                <img
+                  src="/fertiliser.svg"
+                  alt="icon of fertiliser"
+                  height={40}
+                  width={40}
+                  className="inline"
+                ></img>
+                {plantInfo.fertilizing_log != null ? (
+                  <div className="ml-2">
+                    <p>
+                      {plantInfo.fertilizing_log.quantity}g of{" "}
+                      {plantInfo.fertilizing_log.type}
+                    </p>
+                    <p>
+                      {
+                        numberToMonth[
+                          plantInfo.fertilizing_log.dateTime
+                            .split("T")[0]
+                            .split("-")[1] as keyof typeof numberToMonth
+                        ]
+                      }{" "}
+                      {
+                        plantInfo.fertilizing_log.dateTime
+                          .split("T")[0]
+                          .split("-")[2]
+                      }
+                    </p>
+                  </div>
+                ) : (
+                  <p>You have not fertilised the plant yet</p>
+                )}
               </div>
-            ) : (
-              <p>You have not added any plant's health problems yet</p>
-            )}
+            </div>
+          </div>
+          <div className="text-sm m-4">
+            <div className="flex items-start">
+              <img
+                src="/medication.svg"
+                alt="icon of medications"
+                height={35}
+                width={35}
+                className="inline"
+              ></img>
+              <div className="flex flex-col">
+                {plantInfo.disease_log != null &&
+                plantInfo.disease_log.length > 0 ? (
+                  plantInfo.disease_log.map((diseaseLog) => {
+                    return (
+                      <div className="ml-2 mb-2">
+                        <p className="font-semibold">
+                          {diseaseLog?.disease_type}
+                        </p>
+                        <p className="inline">
+                          <span>
+                            {
+                              numberToMonth[
+                                diseaseLog?.startDate
+                                  .split("T")[0]
+                                  .split("-")[1] as keyof typeof numberToMonth
+                              ]
+                            }
+                          </span>{" "}
+                          <span>
+                            {diseaseLog?.startDate.split("T")[0].split("-")[2]}
+                          </span>{" "}
+                          -{" "}
+                        </p>
+                        {diseaseLog?.endDate ? (
+                          <p className="inline">
+                            <span>
+                              {
+                                numberToMonth[
+                                  diseaseLog?.endDate
+                                    .split("T")[0]
+                                    .split("-")[1] as keyof typeof numberToMonth
+                                ]
+                              }
+                            </span>{" "}
+                            <span>
+                              {diseaseLog?.endDate.split("T")[0].split("-")[2]}
+                            </span>
+                          </p>
+                        ) : (
+                          <p className="inline">now</p>
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p>You have not added any plant's health problems yet</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
