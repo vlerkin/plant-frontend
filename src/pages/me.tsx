@@ -64,7 +64,7 @@ const Profile = () => {
         </h1>
       </div>
       <div className="flex justify-center">
-        <div className="flex flex-col items-center -mt-10 mb-10 backdrop-blur-md max-h-[60%] bg-gray-900/10 p-6 rounded-md text-white text-sm w-4/5 md:-mt-20 lg:-mt-20 md:w-1/2 lg:1/3 md:text-base lg:text-base">
+        <div className="flex flex-col items-center -mt-10 mb-10 backdrop-blur-md max-h-[60%] bg-gray-900/10 p-6 rounded-md text-white text-sm w-4/5 md:-mt-20 lg:-mt-20 md:w-2/5 lg:2/5 md:text-base lg:text-base">
           <div className="flex flex-col items-center md:flex-row lg:flex-row">
             {userInfo.photo ? (
               <div
@@ -75,13 +75,15 @@ const Profile = () => {
               <div className="bg-[url('/user.svg')] rounded-full bg-center bg-no-repeat bg-cover w-32 h-32 md:w-44 md:h-44 md:m-6 md:rounded-md lg:rounded-full lg:w-44 lg:h-44 lg:m-6"></div>
             )}
             <div className="flex flex-col items-center whitespace-pre-line">
-              <p className="font-semibold text-base">{userInfo.name}</p>
+              <p className="font-semibold text-base md:text-lg lg:text-lg">
+                {userInfo.name}
+              </p>
               <p className="break-all">{userInfo.email}</p>
             </div>
           </div>
           <Hidden>
             <form className="border-white border-dashed border-[1px] rounded-md p-4">
-              <div>
+              <div className="flex flex-col items-center justify-center">
                 <label className="block mb-2">
                   What is the name of a caretaker?
                 </label>
@@ -89,11 +91,11 @@ const Profile = () => {
                   type="text"
                   value={caretakerName}
                   onChange={handleNameOnChange}
-                  className="w-full md:w-96 lg:w-96"
+                  className="max-w-full md:max-w-96 lg:max-w-96"
                 ></Input>
               </div>
 
-              <div>
+              <div className="flex flex-col items-center justify-center">
                 <label className="block mb-2 mt-2">
                   Until what date you want this person to have access?
                 </label>
@@ -102,7 +104,7 @@ const Profile = () => {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-full justify-start text-left font-normal md:w-96 lg:w-96",
+                        "justify-start text-left font-normal min-w-full md:max-w-96 lg:max-w-96",
                         !date && "text-muted-foreground"
                       )}
                     >
@@ -119,6 +121,9 @@ const Profile = () => {
                     />
                   </PopoverContent>
                 </Popover>
+                <button className="mt-4 border-[1px] border-white border-solid rounded-md bg-sky-100/20 p-2 hover:bg-[#81A684] active:bg-sky-200/20">
+                  Create Permission
+                </button>
               </div>
             </form>
           </Hidden>

@@ -84,7 +84,7 @@ const MyPlants = () => {
         <div className="flex justify-center items-center">
           <button
             onClick={() => router.push("/add-plant")}
-            className="flex items-center m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="flex items-center m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
           >
             <img
               src="/plus.svg"
@@ -99,7 +99,7 @@ const MyPlants = () => {
             <p className="text-sm hidden md:text-base md:block">Add Plant</p>
           </button>
 
-          <button className="m-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4">
+          <button className="m-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20">
             <img
               src="/watercan.svg"
               alt="icon of watering can"
@@ -111,7 +111,7 @@ const MyPlants = () => {
           </button>
           <button
             onClick={() => router.push("/add-plant")}
-            className="m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
           >
             <img
               src="/share.svg"
