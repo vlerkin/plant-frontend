@@ -4,6 +4,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 const numberToMonth = {
   "01": "Jan",
@@ -73,6 +75,7 @@ const Plant = () => {
   const [plantInfo, setPlantInfo] = useState<PlantInfo | null>(null);
   const router = useRouter();
   const plantId = Number(router.query.plantId);
+  const { toast } = useToast();
   useEffect(() => {
     if (plantId === undefined || isNaN(plantId)) {
       return;
@@ -104,9 +107,28 @@ const Plant = () => {
   if (!plantInfo) {
     return <p>Loading...</p>;
   }
+  const handleWateringClick = async () => {
+    try {
+      await axios.post(
+        `http://localhost:8000/my-plants/${plantId}/watering`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      toast({
+        title: "Success!",
+        description: "Plant watered",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen flex justify-center items-start font-mono">
       <NavBar />
+      <Toaster />
       <div className="backdrop-blur-md bg-gray-900/10 rounded-md w-full text-white my-20 mx-4 md:w-2/5 lg:w-2/5">
         <div className="md:flex md:flex-row md:items-center">
           {plantInfo.info.photo_url ? (
@@ -327,6 +349,38 @@ const Plant = () => {
               </div>
             </div>
           </div>
+        </div>
+        <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2">
+          Available actions
+        </p>
+        <div className="flex justify-around">
+          <button
+            onClick={() => handleWateringClick()}
+            className="my-4 mx-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+          >
+            <img
+              src="/watercan.svg"
+              alt="icon of watering can"
+              className="inline w-12 h-12 md:hidden lg:hidden"
+            ></img>
+            <p className="text-sm hidden md:text-base md:block">Water Plant</p>
+          </button>
+          <button className="my-4 mx-2 font-mono border-solid border-[1px] border-yellow-300 rounded-md py-2 px-4 bg-yellow-100/20 hover:bg-yellow-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4">
+            <img
+              src="/edit.svg"
+              alt="icon of paper and pen"
+              className="inline w-12 h-12 md:hidden lg:hidden"
+            ></img>
+            <p className="text-sm hidden md:text-base md:block">Edit Plant</p>
+          </button>
+          <button className="my-4 mx-2 font-mono border-solid border-[1px] border-red-600 rounded-md py-2 px-4 bg-red-100/20 hover:bg-red-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4">
+            <img
+              src="/delete.svg"
+              alt="icon of garbage bin"
+              className="inline w-12 h-12 md:hidden lg:hidden"
+            ></img>
+            <p className="text-sm hidden md:text-base md:block">Delete Plant</p>
+          </button>
         </div>
       </div>
     </main>
