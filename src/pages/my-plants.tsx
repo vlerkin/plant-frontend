@@ -50,6 +50,7 @@ const MyPlants = () => {
   if (!myPlants) {
     return <p>Loading...</p>;
   }
+
   const handleClickPlant = (plant_id: number) => {
     router.push(`/my-plants/${plant_id}`);
   };
@@ -110,9 +111,19 @@ const MyPlants = () => {
               Share My Plants
             </p>
           </button>
+          <button className="m-4 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4">
+            <img
+              src="/watercan.svg"
+              alt="icon of watering can"
+              className="inline w-12 h-12 md:hidden lg:hidden"
+            ></img>
+            <p className="text-sm hidden md:text-base md:block">
+              Water Several Plants
+            </p>
+          </button>
         </div>
       </div>
-      <div className="grid gap-4 grid-cols-2 overflow-scroll p-10 md:grid-cols-4 md:gap-8 font-mono">
+      <div className="grid gap-4 grid-cols-2 overflow-scroll p-10 md:grid-cols-6 md:gap-8 font-mono">
         {myPlants.length === 0 && (
           <p className="col-span-2 col-start-2 text-center text-sm md:text-base lg:text-base">
             You have no plants yet
@@ -131,32 +142,55 @@ const MyPlants = () => {
               >
                 {aPlant.photo_url ? (
                   <div
-                    className="bg-center rounded-l-md bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"
+                    className="bg-center rounded-l-md bg-no-repeat bg-cover h-32 w-24 md:w-60 md:h-60"
                     style={{ backgroundImage: `url(${aPlant.photo_url})` }}
                   ></div>
                 ) : (
-                  <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover md:w-60 md:h-60 w-60 h-36"></div>
+                  <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover h-32 w-24 md:w-60 md:h-60"></div>
                 )}
-                <div className="flex flex-col justify-around ml-4 p-2">
-                  <span className="inline font-semibold md:text-xl">
+                <div className="flex flex-col items-center justify-around ml-4 p-2">
+                  <span className="inline font-semibold md:text-xl text-center">
                     {aPlant.name}
                   </span>{" "}
-                  {aPlant.is_healthy && (
+                  {aPlant.is_healthy ? (
                     <img
                       className="w-6 h-6 inline absolute -top-1.5 -right-1.5 backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
                       src="/leaf.svg"
                       alt="leaf icon -  healthy"
                     />
+                  ) : (
+                    <img
+                      className="w-6 h-6 inline absolute -top-1.5 -right-1.5 backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
+                      src="/sick.svg"
+                      alt="leaf icon -  sick"
+                    />
                   )}
-                  <p>
-                    Watering every {aPlant.howOftenWatering}{" "}
-                    {aPlant.howOftenWatering === 1 ? (
-                      <span> day</span>
-                    ) : (
-                      <span> days</span>
-                    )}{" "}
-                    with {aPlant.waterVolume} L of water
-                  </p>
+                  <div className="flex flex-col items-start">
+                    <div className="text-sm md:text-base lg:text-base flex items-start">
+                      <img
+                        src="/watering.svg"
+                        alt="icon of watering can"
+                        className="inline pb-[1px] mr-2 h-6 w-6"
+                      />
+
+                      <span>
+                        every {aPlant.howOftenWatering}{" "}
+                        {aPlant.howOftenWatering === 1 ? (
+                          <span> day</span>
+                        ) : (
+                          <span> days</span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="text-sm md:text-base lg:text-base flex items-start">
+                      <img
+                        src="/drop.svg"
+                        alt="icon of water drop"
+                        className="inline mr-2 h-5 w-5"
+                      />
+                      <span>{aPlant.waterVolume} L</span>
+                    </div>
+                  </div>
                   {aPlant.time_to_water && (
                     <img
                       className="w-6 h-6 inline absolute -top-1.5 right-[18px] backdrop-blur-md bg-gray-900/10 rounded-full p-[3px]"
