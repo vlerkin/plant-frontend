@@ -1,6 +1,8 @@
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { LightEnum, LocationEnum } from "@/interfaces/plant_interfaces";
+import { AuthUser } from "@/interfaces/user_interfaces";
+import { getAuthUser } from "@/lib/utils";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -28,12 +30,23 @@ const MyPlants = () => {
   const router = useRouter();
   const [myPlants, setMyPlants] = useState<MyPlant[] | null>(null);
   const [filterState, setFilterState] = useState<boolean>(false);
+  const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
+  const [isUserLoading, setUserLoading] = useState<boolean>(true);
   useEffect(() => {
+    // check token
     const token = localStorage.getItem("token");
     if (token === null) {
       router.push("/login");
       return;
     }
+
+    const authenticateUser = async () => {
+      const authUser = await getAuthUser();
+      setAuthUser(authUser);
+      setUserLoading(false);
+    };
+    authenticateUser();
+
     const getPlantsFromApi = async (token: string) => {
       const response = await axios.get("http://localhost:8000/my-plants", {
         headers: { Authorization: `Bearer ${token}` },
@@ -50,7 +63,12 @@ const MyPlants = () => {
   if (!myPlants) {
     return <p>Loading...</p>;
   }
-
+  if (isUserLoading) {
+    return <p>Loading...</p>;
+  } else if (!authUserState) {
+    router.push("/login");
+    return;
+  }
   const handleClickPlant = (plant_id: number) => {
     router.push(`/my-plants/${plant_id}`);
   };
@@ -82,22 +100,24 @@ const MyPlants = () => {
           </button>
         </div>
         <div className="flex justify-center items-center">
-          <button
-            onClick={() => router.push("/add-plant")}
-            className="flex items-center m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
-          >
-            <img
-              src="/plus.svg"
-              alt="icon of watering can"
-              className="inline h-6 w-6 md:hidden lg:hidden"
-            />
-            <img
-              src="/plant.svg"
-              alt="icon of watering can"
-              className="inline h-12 w-12 md:hidden lg:hidden"
-            />
-            <p className="text-sm hidden md:text-base md:block">Add Plant</p>
-          </button>
+          {!authUserState.is_guest && (
+            <button
+              onClick={() => router.push("/add-plant")}
+              className="flex items-center m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
+            >
+              <img
+                src="/plus.svg"
+                alt="icon of watering can"
+                className="inline h-6 w-6 md:hidden lg:hidden"
+              />
+              <img
+                src="/plant.svg"
+                alt="icon of watering can"
+                className="inline h-12 w-12 md:hidden lg:hidden"
+              />
+              <p className="text-sm hidden md:text-base md:block">Add Plant</p>
+            </button>
+          )}
 
           <button className="m-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20">
             <img
@@ -109,19 +129,21 @@ const MyPlants = () => {
               Water Several Plants
             </p>
           </button>
-          <button
-            onClick={() => router.push("/add-plant")}
-            className="m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
-          >
-            <img
-              src="/share.svg"
-              alt="icon of watering can"
-              className="inline h-12 w-12 md:hidden lg:hidden"
-            />
-            <p className="text-sm hidden md:text-base md:block">
-              Share My Plants
-            </p>
-          </button>
+          {!authUserState.is_guest && (
+            <button
+              onClick={() => router.push("/add-plant")}
+              className="m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
+            >
+              <img
+                src="/share.svg"
+                alt="icon of watering can"
+                className="inline h-12 w-12 md:hidden lg:hidden"
+              />
+              <p className="text-sm hidden md:text-base md:block">
+                Share My Plants
+              </p>
+            </button>
+          )}
         </div>
       </div>
       <div className="grid gap-4 grid-cols-2 overflow-scroll p-10 md:grid-cols-6 md:gap-8 font-mono">

@@ -37,7 +37,7 @@ const NavBar = () => {
     <nav className="py-2 font-mono text-white fixed top-0 w-screen z-[10] text-sm flex justify-between items-center backdrop-blur-md bg-gray-900/10 md:text-base lg:text-base">
       <NavigationSection className="mx-2.5" href="/" text="PlantieCare" />
       {token ? (
-        <div>
+        <div className="flex items-center mr-[1px] md:mr-4 lg:mr-4">
           <NavigationSection
             className="mx-2.5"
             href="/my-plants"
@@ -48,6 +48,14 @@ const NavBar = () => {
             onClick={handleClickLogOut}
           >
             Log out
+          </button>
+          <button>
+            <img
+              src="/profile.svg"
+              alt="icon of user "
+              className="h-6 w-6 rounded-full"
+              onClick={() => router.push("/me")}
+            />
           </button>
         </div>
       ) : (
