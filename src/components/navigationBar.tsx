@@ -1,6 +1,16 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, Sprout, User } from "lucide-react";
 
 interface NavigationItem {
   text: string;
@@ -38,13 +48,47 @@ const NavBar = () => {
       <NavigationSection className="mx-2.5" href="/" text="PlantieCare" />
       {token ? (
         <div className="flex items-center mr-[1px] md:mr-4 lg:mr-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="inline md:hidden lg:hidden rounded-md mx-2">
+                <img
+                  src="/menu.png"
+                  alt="icon of hamburger menu"
+                  className="h-8 w-8"
+                />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <button onClick={() => router.push("/me")}>
+                    <span>Profile</span>
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Sprout className="mr-2 h-4 w-4" />
+                  <button onClick={() => router.push("/my-plants")}>
+                    <span>My Plants</span>
+                  </button>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <NavigationSection
-            className="mx-2.5"
+            className="mx-2.5 hidden md:inline lg:inline"
             href="/my-plants"
             text="My Plants"
           />
           <button
-            className="mx-2.5 border-white border-[1px] border-solid rounded-sm px-2 py-[4px] hover:border-dashed"
+            className="mx-2.5 border-white border-[1px] border-solid rounded-sm px-2 py-[4px] hover:border-dashed hidden md:inline lg:inline"
             onClick={handleClickLogOut}
           >
             Log out
@@ -53,7 +97,7 @@ const NavBar = () => {
             <img
               src="/profile.svg"
               alt="icon of user "
-              className="h-6 w-6 rounded-full"
+              className="h-8 w-8 rounded-full mx-2 hidden md:inline lg:inline"
               onClick={() => router.push("/me")}
             />
           </button>
@@ -61,12 +105,12 @@ const NavBar = () => {
       ) : (
         <div>
           <NavigationSection
-            className="mx-2.5"
+            className="mx-2.5 text-sm md:text-base lg:text-base"
             href="/register"
             text="Register"
           />{" "}
           <NavigationSection
-            className="mx-2.5 border-white border-[1px] border-solid rounded-sm px-2 py-[4px] hover:border-dashed"
+            className="mx-2.5 border-white border-[1px] border-solid rounded-sm px-2 py-[4px] hover:border-dashed text-sm md:text-base lg:text-base"
             href="/login"
             text="Log in"
           />

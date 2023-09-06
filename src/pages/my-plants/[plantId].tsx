@@ -330,7 +330,7 @@ const Plant = () => {
                     </p>
                   </div>
                 ) : (
-                  <p>You have not fertilised the plant yet</p>
+                  <p className="ml-2">You have not fertilised the plant yet</p>
                 )}
               </div>
             </div>
@@ -390,7 +390,9 @@ const Plant = () => {
                     );
                   })
                 ) : (
-                  <p>You have not added any plant's health problems yet</p>
+                  <p className="ml-2">
+                    You have not added any plant's health problems yet
+                  </p>
                 )}
               </div>
             </div>
