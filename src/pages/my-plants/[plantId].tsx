@@ -120,14 +120,14 @@ const Plant = () => {
   }
   const handleWateringClick = async () => {
     try {
-      await axios.post(
+      const response = await axios.post(
         `http://localhost:8000/my-plants/${plantId}/watering`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
+      console.log(response);
       toast({
         title: "Success!",
         description: "Plant watered",
@@ -161,7 +161,7 @@ const Plant = () => {
             <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover w-full h-48"></div>
           )}
           <div className="flex flex-col m-4 md:inline">
-            <div className="flex flex-col justify-center mb-2 ">
+            <div className="flex flex-col justify-center mb-2">
               <span className="text-center font-semibold text-lg md:text-xl lg:text-xl">
                 {plantInfo.info.name}
               </span>
@@ -246,7 +246,10 @@ const Plant = () => {
         <div className="md:flex lg:flex">
           <div>
             <div className="text-sm m-4">
-              <div className="flex items-center">
+              <div
+                className="flex items-center"
+                key={plantInfo.watering_log?.id}
+              >
                 <img
                   src="/watercan.svg"
                   alt="icon of watering can"

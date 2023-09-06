@@ -62,8 +62,8 @@ const MyPlants = () => {
           My Plants
         </h1>
       </div>
-      <div className="flex mx-4 mt-4 items-center justify-between">
-        <div className="flex justify-center items-center flex-col md:flex-row lg:flex-row">
+      <div className="flex mx-4 mt-4 items-center justify-between flex-col md:flex-row lg:flex-row">
+        <div className="flex justify-center items-center">
           <button
             onClick={() => setFilterState(false)}
             className={`m-4 text-sm font-mono border-dashed border-neutral-50 border-[1px] p-2 rounded-md text-neutral-50 hover:backdrop-blur-md hover:bg-gray-900/10 ${
@@ -81,15 +81,15 @@ const MyPlants = () => {
             Thirsty Plants
           </button>
         </div>
-        <div className=" flex justify-center items-center flex-col md:flex-row lg:flex-row">
+        <div className="flex justify-center items-center">
           <button
             onClick={() => router.push("/add-plant")}
-            className="flex items-center m-4 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="flex items-center m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
           >
             <img
               src="/plus.svg"
               alt="icon of watering can"
-              className="inline h-8 w-8 md:hidden lg:hidden"
+              className="inline h-6 w-6 md:hidden lg:hidden"
             />
             <img
               src="/plant.svg"
@@ -98,9 +98,20 @@ const MyPlants = () => {
             />
             <p className="text-sm hidden md:text-base md:block">Add Plant</p>
           </button>
+
+          <button className="m-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4">
+            <img
+              src="/watercan.svg"
+              alt="icon of watering can"
+              className="inline w-12 h-12 md:hidden lg:hidden"
+            ></img>
+            <p className="text-sm hidden md:text-base md:block">
+              Water Several Plants
+            </p>
+          </button>
           <button
             onClick={() => router.push("/add-plant")}
-            className="m-4 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
           >
             <img
               src="/share.svg"
@@ -109,16 +120,6 @@ const MyPlants = () => {
             />
             <p className="text-sm hidden md:text-base md:block">
               Share My Plants
-            </p>
-          </button>
-          <button className="m-4 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4">
-            <img
-              src="/watercan.svg"
-              alt="icon of watering can"
-              className="inline w-12 h-12 md:hidden lg:hidden"
-            ></img>
-            <p className="text-sm hidden md:text-base md:block">
-              Water Several Plants
             </p>
           </button>
         </div>
