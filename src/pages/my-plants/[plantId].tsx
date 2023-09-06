@@ -6,6 +6,17 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const numberToMonth = {
   "01": "Jan",
@@ -121,6 +132,16 @@ const Plant = () => {
         title: "Success!",
         description: "Plant watered",
       });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleDeleteClick = async () => {
+    try {
+      await axios.delete(`http://localhost:8000/my-plants/${plantId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      router.push("/my-plants");
     } catch (error) {
       console.log(error);
     }
@@ -373,14 +394,36 @@ const Plant = () => {
             ></img>
             <p className="text-sm hidden md:text-base md:block">Edit Plant</p>
           </button>
-          <button className="my-4 mx-2 font-mono border-solid border-[1px] border-red-600 rounded-md py-2 px-4 bg-red-100/20 hover:bg-red-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4">
-            <img
-              src="/delete.svg"
-              alt="icon of garbage bin"
-              className="inline w-12 h-12 md:hidden lg:hidden"
-            ></img>
-            <p className="text-sm hidden md:text-base md:block">Delete Plant</p>
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="my-4 mx-2 font-mono border-solid border-[1px] border-red-600 rounded-md py-2 px-4 bg-red-100/20 hover:bg-red-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4">
+                <img
+                  src="/delete.svg"
+                  alt="icon of garbage bin"
+                  className="inline w-12 h-12 md:hidden lg:hidden"
+                ></img>
+                <p className="text-sm hidden md:text-base md:block">
+                  Delete Plant
+                </p>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your plant's data from our servers. Delete plant with name{" "}
+                  {plantInfo.info.name}?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => handleDeleteClick()}>
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </main>
