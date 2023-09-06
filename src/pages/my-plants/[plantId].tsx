@@ -17,6 +17,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { AuthUser } from "@/interfaces/user_interfaces";
+import { getAuthUser } from "@/lib/utils";
 
 const numberToMonth = {
   "01": "Jan",
@@ -86,6 +88,8 @@ const Plant = () => {
   const [plantInfo, setPlantInfo] = useState<PlantInfo | null>(null);
   const router = useRouter();
   const plantId = Number(router.query.plantId);
+  const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
+  const [isUserLoading, setUserLoading] = useState<boolean>(true);
   const { toast } = useToast();
   useEffect(() => {
     if (plantId === undefined || isNaN(plantId)) {
@@ -98,6 +102,13 @@ const Plant = () => {
       return;
     }
     setToken(token);
+
+    const authenticateUser = async () => {
+      const authUser = await getAuthUser();
+      setAuthUser(authUser);
+      setUserLoading(false);
+    };
+    authenticateUser();
 
     const getPlantInfoFromApi = async (token: string) => {
       const response = await axios.get(
@@ -115,9 +126,18 @@ const Plant = () => {
     };
     getPlantInfoFromApi(token);
   }, [plantId]);
+
   if (!plantInfo) {
     return <p>Loading...</p>;
   }
+
+  if (isUserLoading) {
+    return <p>Loading...</p>;
+  } else if (!authUserState) {
+    router.push("/login");
+    return;
+  }
+
   const handleWateringClick = async () => {
     try {
       const response = await axios.post(
@@ -136,6 +156,7 @@ const Plant = () => {
       console.log(error);
     }
   };
+
   const handleDeleteClick = async () => {
     try {
       await axios.delete(`http://localhost:8000/my-plants/${plantId}`, {
@@ -146,6 +167,7 @@ const Plant = () => {
       console.log(error);
     }
   };
+
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen flex justify-center items-start font-mono">
       <NavBar />

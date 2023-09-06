@@ -7,6 +7,8 @@ import {
   LocationEnum,
   UploadResults,
 } from "@/interfaces/plant_interfaces";
+import { AuthUser } from "@/interfaces/user_interfaces";
+import { getAuthUser } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -49,18 +51,26 @@ type DataFromForm = z.infer<typeof checkFormData>;
 const AddPlant = () => {
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
+  const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
+  const [isUserLoading, setUserLoading] = useState<boolean>(true);
+
   useEffect(() => {
-    // getting token from a local storage
     const token: string | null = localStorage.getItem("token");
-    // if there is no token, user will be redirected to /login page and code stops running
-    // if there is a token in a local storage, it will be saved into a state
     if (token == null) {
       router.push("/login");
       return;
     } else {
       setToken(token);
     }
+
+    const authenticateUser = async () => {
+      const authUser = await getAuthUser();
+      setAuthUser(authUser);
+      setUserLoading(false);
+    };
+    authenticateUser();
   }, []);
+
   const {
     register,
     handleSubmit,
@@ -68,6 +78,14 @@ const AddPlant = () => {
   } = useForm<DataFromForm>({
     resolver: zodResolver(checkFormData),
   });
+
+  if (isUserLoading) {
+    return <p>Loading...</p>;
+  } else if (!authUserState) {
+    router.push("/login");
+    return;
+  }
+
   const handleFormSubmit = async (data: DataFromForm) => {
     try {
       let photoName = null;

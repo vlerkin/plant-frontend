@@ -14,7 +14,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, getAuthUser } from "@/lib/utils";
+import { AuthUser } from "@/interfaces/user_interfaces";
 
 const checkUserInfo = z.object({
   name: z.string(),
@@ -29,6 +30,8 @@ const Profile = () => {
   const [token, setToken] = useState<string | null>(null);
   const [date, setDate] = useState<Date>();
   const [caretakerName, setCaretakerName] = useState<string>("");
+  const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
+  const [isUserLoading, setUserLoading] = useState<boolean>(true);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token === null) {
@@ -36,6 +39,12 @@ const Profile = () => {
       return;
     }
     setToken(token);
+    const authenticateUser = async () => {
+      const authUser = await getAuthUser();
+      setAuthUser(authUser);
+      setUserLoading(false);
+    };
+    authenticateUser();
     const getUserFromApi = async (token: string) => {
       const response = await axios.get("http://localhost:8000/me", {
         headers: { Authorization: `Bearer ${token}` },
@@ -51,6 +60,12 @@ const Profile = () => {
   }, []);
   if (!userInfo) {
     return <p>Loading...</p>;
+  }
+  if (isUserLoading) {
+    return <p>Loading...</p>;
+  } else if (!authUserState) {
+    router.push("/login");
+    return;
   }
   const handleNameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCaretakerName(e.target.value);

@@ -33,13 +33,12 @@ const MyPlants = () => {
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
   useEffect(() => {
-    // check token
     const token = localStorage.getItem("token");
     if (token === null) {
       router.push("/login");
       return;
     }
-
+    // check if token not expired and wait until function returns the answer
     const authenticateUser = async () => {
       const authUser = await getAuthUser();
       setAuthUser(authUser);
