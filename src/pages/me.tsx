@@ -24,9 +24,23 @@ const checkUserInfo = z.object({
 });
 type UserInfo = z.infer<typeof checkUserInfo>;
 
+const checkTokenInfo = z.array(
+  z.object({
+    token: z.string(),
+    nameToken: z.string(),
+    userId: z.number().int(),
+    id: z.number().int(),
+    startDate: z.string(),
+    endDate: z.string(),
+  })
+);
+type AccessTokenInfo = z.infer<typeof checkTokenInfo>;
+
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [accessTokens, setAccessTokens] = useState<null>(null);
+  const [accessTokens, setAccessTokens] = useState<AccessTokenInfo | null>(
+    null
+  );
   const [token, setToken] = useState<string | null>(null);
   const [date, setDate] = useState<Date>();
   const [caretakerName, setCaretakerName] = useState<string>("");
@@ -61,6 +75,12 @@ const Profile = () => {
       const response = await axios.get("http://localhost:8000/access-tokens", {
         headers: { Authorization: `Bearer ${token}` },
       });
+      const parsedResponse = checkTokenInfo.safeParse(response.data);
+      if (parsedResponse.success === true) {
+        setAccessTokens(parsedResponse.data);
+      } else {
+        console.log(parsedResponse.error.flatten());
+      }
     };
     getAccessTokensFromApi(token);
   }, []);
@@ -102,7 +122,7 @@ const Profile = () => {
               <p className="break-all">{userInfo.email}</p>
             </div>
           </div>
-          <Hidden>
+          <Hidden hide={"Hide Form"} show={"Create permission for access"}>
             <form className="border-white border-dashed border-[1px] rounded-md p-4">
               <div className="flex flex-col items-center justify-center">
                 <label className="block mb-2">
