@@ -57,6 +57,12 @@ const Profile = () => {
       }
     };
     getUserFromApi(token);
+    const getAccessTokensFromApi = async (token: string) => {
+      const response = await axios.get("http://localhost:8000/access-tokens", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    };
+    getAccessTokensFromApi(token);
   }, []);
   if (!userInfo) {
     return <p>Loading...</p>;

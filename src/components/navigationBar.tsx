@@ -78,7 +78,9 @@ const NavBar = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <button onClick={handleClickLogOut}>
+                  <span>Log out</span>
+                </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
