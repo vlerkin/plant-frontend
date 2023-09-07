@@ -8,21 +8,13 @@ import {
   UploadResults,
 } from "@/interfaces/plant_interfaces";
 import { AuthUser } from "@/interfaces/user_interfaces";
-import { getAuthUser } from "@/lib/utils";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE, getAuthUser } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const MAX_FILE_SIZE = 10000000;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
 
 const checkFormData = z.object({
   name: z.string().max(100),

@@ -14,7 +14,13 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { cn, getAuthUser, numberToMonth } from "@/lib/utils";
+import {
+  ACCEPTED_IMAGE_TYPES,
+  MAX_FILE_SIZE,
+  cn,
+  getAuthUser,
+  numberToMonth,
+} from "@/lib/utils";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -29,6 +35,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ErrorMessage from "@/components/error";
 
 const checkUserInfo = z.object({
   name: z.string(),
@@ -48,6 +67,22 @@ const checkTokenInfo = z.array(
   })
 );
 type AccessTokenInfo = z.infer<typeof checkTokenInfo>;
+
+const checkFormData = z.object({
+  photo: z
+    .any()
+    .refine(
+      (files) => !files || !files[0] || files?.[0]?.size <= MAX_FILE_SIZE,
+      `Max image size is 10MB.`
+    )
+    .refine(
+      (files) =>
+        !files || !files[0] || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ),
+});
+
+type DataFromForm = z.infer<typeof checkFormData>;
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -97,6 +132,13 @@ const Profile = () => {
     };
     getAccessTokensFromApi(token);
   }, []);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DataFromForm>({
+    resolver: zodResolver(checkFormData),
+  });
   if (!userInfo) {
     return <p>Loading...</p>;
   }
@@ -144,6 +186,42 @@ const Profile = () => {
       console.log(error);
     }
   };
+
+  const handlePhotoSubmit = async (data: DataFromForm) => {
+    console.log("HANDLE PHOTO SUBMIT", data);
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/upload/user",
+        {
+          file: data.photo[0],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      const photoName = res.data.filename;
+      await axios.patch(
+        "http://localhost:8000/me",
+        {
+          name: null,
+          photo: photoName,
+          email: null,
+          password: null,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      router.push("/me");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen">
       <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
@@ -158,12 +236,74 @@ const Profile = () => {
           <div className="flex flex-col items-center md:flex-row lg:flex-row">
             {userInfo.photo ? (
               <div
-                className="bg-center bg-no-repeat rounded-full bg-cover w-32 h-32 md:rounded-md md:w-44 md:h-44 md:m-6 lg:rounded-full lg:w-44 lg:h-44 lg:m-6"
+                className="relative bg-center bg-no-repeat rounded-full bg-cover w-32 h-32 md:rounded-md md:w-44 md:h-44 md:m-6 lg:rounded-full lg:w-44 lg:h-44 lg:m-6"
                 style={{ backgroundImage: `url(${userInfo.photo})` }}
-              ></div>
+              >
+                <button>
+                  <img
+                    src="/edit_photo.svg"
+                    alt="photo edit icon"
+                    className="absolute bottom-2 right-0 h-8 w-8 z-100 bg-white rounded-full p-[1px] rotate-6 md:bottom-2 md:right-[12px]"
+                  />
+                </button>
+              </div>
             ) : (
-              <div className="bg-[url('/user.svg')] rounded-full bg-center bg-no-repeat bg-cover w-32 h-32 md:w-44 md:h-44 md:m-6 md:rounded-md lg:rounded-full lg:w-44 lg:h-44 lg:m-6"></div>
+              <div className="relative bg-[url('/user.png')] rounded-full bg-center bg-no-repeat bg-auto border-white border-solid border-[1px] w-32 h-32 md:w-44 md:h-44 md:m-6 md:rounded-md lg:rounded-full lg:w-44 lg:h-44 lg:m-6">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button>
+                      <img
+                        src="/edit_photo.svg"
+                        alt="photo edit icon"
+                        className="absolute bottom-2 right-0 h-8 w-8 z-100 bg-white rounded-full p-[1px] rotate-6 md:bottom-2 md:right-[12px] hover:bg-sky-100/60"
+                      />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[300px]">
+                    <DialogHeader>
+                      <DialogTitle>Edit photo</DialogTitle>
+                      <DialogDescription>
+                        Upload a photo here. Click save when you're done.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="flex items-center justify-center gap-4">
+                        <form
+                          encType="multipart/form-data"
+                          onSubmit={handleSubmit(handlePhotoSubmit)}
+                        >
+                          <Label htmlFor="photo" className="ml-[1px]">
+                            Choose photo
+                          </Label>
+                          <Input
+                            type="file"
+                            id="photo"
+                            className="col-span-3"
+                            {...register("photo")}
+                          />
+                          {errors.root && (
+                            <ErrorMessage
+                              message={errors.root?.message?.toString()}
+                            />
+                          )}
+                          {errors.photo && (
+                            <ErrorMessage
+                              message={errors.photo?.message?.toString()}
+                            />
+                          )}
+                          <DialogFooter>
+                            <Button className="mt-4" type="submit">
+                              Save changes
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             )}
+
             <div className="flex flex-col items-center whitespace-pre-line">
               <p className="font-semibold text-base md:text-lg lg:text-lg">
                 {userInfo.name}
@@ -183,7 +323,7 @@ const Profile = () => {
                     alt="icon of a key"
                     className="inline h-6 w-6"
                   />
-                  <span className="break-all font-semibold">
+                  <span className="break-all font-semibold text-sm md:text-base">
                     {aToken.nameToken}{" "}
                   </span>
                   <span className="break-all text-sm italic">
@@ -203,9 +343,9 @@ const Profile = () => {
                         <img
                           src="/remove.png"
                           alt="icon of a trash bin"
-                          className="inline h-6 w-6"
+                          className="inline h-6 w-6 md:hidden lg:hidden"
                         />
-                        <p className="text-sm hidden md:text-base md:block">
+                        <p className="text-sm hidden md:block border-solid border-[1px] border-white rounded-md p-2  bg-sky-100/20 hover:bg-[#81A684]">
                           Delete Permission
                         </p>
                       </button>
@@ -284,7 +424,7 @@ const Profile = () => {
                 </Popover>
                 <button
                   type="submit"
-                  className="mt-4 border-[1px] border-white border-solid rounded-md bg-sky-100/20 p-2 hover:bg-[#81A684] active:bg-sky-200/20"
+                  className=" text-white mt-4 border-[1px] border-white border-solid rounded-md bg-sky-100/20 p-2 hover:bg-[#81A684] active:bg-sky-200/20"
                 >
                   Create Permission
                 </button>

@@ -37,3 +37,11 @@ export const numberToMonth = {
   "11": "Nov",
   "12": "Dec",
 };
+
+export const MAX_FILE_SIZE = 10000000;
+export const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
