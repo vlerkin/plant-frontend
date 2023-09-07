@@ -14,8 +14,21 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { cn, getAuthUser } from "@/lib/utils";
+import { cn, getAuthUser, numberToMonth } from "@/lib/utils";
 import { AuthUser } from "@/interfaces/user_interfaces";
+import { toast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const checkUserInfo = z.object({
   name: z.string(),
@@ -87,6 +100,9 @@ const Profile = () => {
   if (!userInfo) {
     return <p>Loading...</p>;
   }
+  if (!accessTokens) {
+    return <p>Loading...</p>;
+  }
   if (isUserLoading) {
     return <p>Loading...</p>;
   } else if (!authUserState) {
@@ -96,10 +112,43 @@ const Profile = () => {
   const handleNameOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCaretakerName(e.target.value);
   };
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        "http://localhost:8000/access-tokens",
+        { guest_name: caretakerName, end_date: date },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast({
+        title: "Success!",
+        description: "New access permission created",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleRemoveTokenClick = async (tokenId: number) => {
+    try {
+      await axios.delete("http://localhost:8000/access-tokens", {
+        data: { token_id: tokenId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast({
+        title: "Success!",
+        description: "Permission deleted",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen">
       <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
         <NavBar />
+        <Toaster />
         <h1 className="font-mono -mb- font-bold text-xl drop-shadow-2xl text-white md:-mb-4 lg:-md-4 md:text-4xl lg:text-4xl">
           My Profile
         </h1>
@@ -122,8 +171,75 @@ const Profile = () => {
               <p className="break-all">{userInfo.email}</p>
             </div>
           </div>
+          <Hidden hide={"Hide info"} show={"Show access tokens"}>
+            {accessTokens.map((aToken) => {
+              return (
+                <div
+                  key={aToken.id}
+                  className="flex justify-between items-center py-2 border-b-[1px] border-dashed border-white mt-2"
+                >
+                  <img
+                    src="/key.png"
+                    alt="icon of a key"
+                    className="inline h-6 w-6"
+                  />
+                  <span className="break-all font-semibold">
+                    {aToken.nameToken}{" "}
+                  </span>
+                  <span className="break-all text-sm italic">
+                    Valid until{" "}
+                    {
+                      numberToMonth[
+                        aToken.endDate
+                          .split("T")[0]
+                          .split("-")[1] as keyof typeof numberToMonth
+                      ]
+                    }{" "}
+                    {aToken.endDate.split("T")[0].split("-")[2]}
+                  </span>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className="hover:cursor-pointer">
+                        <img
+                          src="/remove.png"
+                          alt="icon of a trash bin"
+                          className="inline h-6 w-6"
+                        />
+                        <p className="text-sm hidden md:text-base md:block">
+                          Delete Permission
+                        </p>
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your guest's token data from our servers.
+                          Delete permission with name {aToken.nameToken}?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleRemoveTokenClick(aToken.id)}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              );
+            })}
+          </Hidden>
           <Hidden hide={"Hide Form"} show={"Create permission for access"}>
-            <form className="border-white border-dashed border-[1px] rounded-md p-4">
+            <form
+              className="border-white border-dashed border-[1px] rounded-md p-4"
+              onSubmit={handleFormSubmit}
+            >
               <div className="flex flex-col items-center justify-center">
                 <label className="block mb-2">
                   What is the name of a caretaker?
@@ -132,12 +248,12 @@ const Profile = () => {
                   type="text"
                   value={caretakerName}
                   onChange={handleNameOnChange}
-                  className="max-w-full md:max-w-96 lg:max-w-96"
+                  className="max-w-full md:max-w-96 lg:max-w-96 text-black"
                 ></Input>
               </div>
 
-              <div className="flex flex-col items-center justify-center">
-                <label className="block mb-2 mt-2">
+              <div className="flex flex-col items-center justify-center text-black">
+                <label className="block mb-2 mt-2 text-white">
                   Until what date you want this person to have access?
                 </label>
                 <Popover>
@@ -149,8 +265,12 @@ const Profile = () => {
                         !date && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
+                      <CalendarIcon className="mr-2 h-4 w-4 " />
+                      {date ? (
+                        format(date, "PPP")
+                      ) : (
+                        <span className="">Pick a date</span>
+                      )}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -162,7 +282,10 @@ const Profile = () => {
                     />
                   </PopoverContent>
                 </Popover>
-                <button className="mt-4 border-[1px] border-white border-solid rounded-md bg-sky-100/20 p-2 hover:bg-[#81A684] active:bg-sky-200/20">
+                <button
+                  type="submit"
+                  className="mt-4 border-[1px] border-white border-solid rounded-md bg-sky-100/20 p-2 hover:bg-[#81A684] active:bg-sky-200/20"
+                >
                   Create Permission
                 </button>
               </div>
