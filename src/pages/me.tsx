@@ -239,13 +239,58 @@ const Profile = () => {
                 className="relative bg-center bg-no-repeat rounded-full bg-cover w-32 h-32 md:rounded-md md:w-44 md:h-44 md:m-6 lg:rounded-full lg:w-44 lg:h-44 lg:m-6"
                 style={{ backgroundImage: `url(${userInfo.photo})` }}
               >
-                <button>
-                  <img
-                    src="/edit_photo.svg"
-                    alt="photo edit icon"
-                    className="absolute bottom-2 right-0 h-8 w-8 z-100 bg-white rounded-full p-[1px] rotate-6 md:bottom-2 md:right-[12px]"
-                  />
-                </button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button>
+                      <img
+                        src="/edit_photo.svg"
+                        alt="photo edit icon"
+                        className="absolute bottom-2 right-0 h-8 w-8 z-100 bg-white rounded-full p-[1px] rotate-[12deg] md:bottom-[12px] md:right-[12px] hover:bg-sky-100/60"
+                      />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[300px]">
+                    <DialogHeader>
+                      <DialogTitle>Edit photo</DialogTitle>
+                      <DialogDescription>
+                        Upload a photo here. Click save when you're done.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="flex items-center justify-center gap-4">
+                        <form
+                          encType="multipart/form-data"
+                          onSubmit={handleSubmit(handlePhotoSubmit)}
+                        >
+                          <Label htmlFor="photo" className="ml-[1px]">
+                            Choose photo
+                          </Label>
+                          <Input
+                            type="file"
+                            id="photo"
+                            className="col-span-3"
+                            {...register("photo")}
+                          />
+                          {errors.root && (
+                            <ErrorMessage
+                              message={errors.root?.message?.toString()}
+                            />
+                          )}
+                          {errors.photo && (
+                            <ErrorMessage
+                              message={errors.photo?.message?.toString()}
+                            />
+                          )}
+                          <DialogFooter>
+                            <Button className="mt-4 w-full" type="submit">
+                              Save changes
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             ) : (
               <div className="relative bg-[url('/user.png')] rounded-full bg-center bg-no-repeat bg-auto border-white border-solid border-[1px] w-32 h-32 md:w-44 md:h-44 md:m-6 md:rounded-md lg:rounded-full lg:w-44 lg:h-44 lg:m-6">
@@ -255,7 +300,7 @@ const Profile = () => {
                       <img
                         src="/edit_photo.svg"
                         alt="photo edit icon"
-                        className="absolute bottom-2 right-0 h-8 w-8 z-100 bg-white rounded-full p-[1px] rotate-6 md:bottom-2 md:right-[12px] hover:bg-sky-100/60"
+                        className="absolute bottom-2 right-0 h-8 w-8 z-100 bg-white rounded-full p-[1px] rotate-[12deg] md:bottom-[12px] md:right-[12px] hover:bg-sky-100/60"
                       />
                     </button>
                   </DialogTrigger>
