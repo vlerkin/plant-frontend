@@ -9,36 +9,16 @@ import {
 } from "@/interfaces/plant_interfaces";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE, getAuthUser } from "@/lib/utils";
+import {
+  DataFromAddPlantForm,
+  checkAddPlantFormData,
+} from "@/zod-schemas/plant-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const checkFormData = z.object({
-  name: z.string().max(100),
-  watering: z.number().int().gte(0).lte(366),
-  volume: z.number().gte(0).lte(1000),
-  light: LightEnum,
-  location: LocationEnum,
-  species: z.string().max(100).nullable(),
-  comment: z.string().max(500).nullable(),
-  photo: z
-    .any()
-    .refine(
-      (files) => !files || !files[0] || files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max image size is 10MB.`
-    )
-    .refine(
-      (files) =>
-        !files || !files[0] || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported."
-    )
-    .nullable(),
-});
-
-type DataFromForm = z.infer<typeof checkFormData>;
 
 const AddPlant = () => {
   const [token, setToken] = useState<string | null>(null);
@@ -67,8 +47,8 @@ const AddPlant = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<DataFromForm>({
-    resolver: zodResolver(checkFormData),
+  } = useForm<DataFromAddPlantForm>({
+    resolver: zodResolver(checkAddPlantFormData),
   });
 
   if (isUserLoading) {
@@ -78,7 +58,7 @@ const AddPlant = () => {
     return;
   }
 
-  const handleFormSubmit = async (data: DataFromForm) => {
+  const handleFormSubmit = async (data: DataFromAddPlantForm) => {
     try {
       let photoName = null;
       if (data.photo[0]) {
@@ -186,7 +166,7 @@ const AddPlant = () => {
               <span className="text-red-600">*</span>
             </label>
             <select
-              className="w-80 mb-4 mt-2 font-mono text-black max-sm:w-[100%] flex h-10 w-full items-center justify-between rounded-md border border-neutral-200 border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:border-neutral-800 dark:bg-neutral-950 dark:ring-offset-neutral-950 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-300"
+              className="mb-4 mt-2 font-mono text-black max-sm:w-[100%] flex h-10 w-full items-center justify-between rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-950 dark:ring-offset-neutral-950 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-300"
               placeholder="Select amount of light"
               {...register("light")}
             >
@@ -204,7 +184,7 @@ const AddPlant = () => {
               <span> (required)</span>
             </label>
             <select
-              className="w-80 mb-4 mt-2 font-mono text-black max-sm:w-[100%] flex h-10 w-full items-center justify-between rounded-md border border-neutral-200 border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:border-neutral-800 dark:bg-neutral-950 dark:ring-offset-neutral-950 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-300"
+              className="mb-4 mt-2 font-mono text-black max-sm:w-[100%] flex h-10 w-full items-center justify-between rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-950 dark:ring-offset-neutral-950 dark:placeholder:text-neutral-400 dark:focus:ring-neutral-300"
               placeholder="Select compass direction"
               {...register("location", { required: false })}
             >

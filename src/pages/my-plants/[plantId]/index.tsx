@@ -19,54 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { getAuthUser, numberToMonth } from "@/lib/utils";
-
-const checkPlantInfo = z.object({
-  info: z.object({
-    id: z.number().int().gte(0),
-    name: z.string().max(100),
-    howOftenWatering: z.number().int().gte(0),
-    light: LightEnum,
-    location: LocationEnum,
-    species: z.string().nullable(),
-    photo_url: z.string().nullable(),
-    waterVolume: z.number(),
-    comment: z.string().nullable(),
-    userId: z.number().int(),
-  }),
-  watering_log: z
-    .object({
-      dateTime: z.string(),
-      id: z.number().int().gte(0),
-      plantId: z.number().int().gte(0),
-      waterVolume: z.number(),
-    })
-    .nullable(),
-  fertilizing_log: z
-    .object({
-      type: z.string(),
-      dateTime: z.string(),
-      quantity: z.number().gte(0),
-      id: z.number().int().gte(0),
-      plantId: z.number().int().gte(0),
-    })
-    .nullable(),
-  disease_log: z
-    .array(
-      z
-        .object({
-          disease_type: z.string(),
-          id: z.number().int().gte(0),
-          startDate: z.string(),
-          plantId: z.number().int().gte(0),
-          endDate: z.string().nullable(),
-          treatment: z.string().nullable(),
-        })
-        .nullable()
-    )
-    .nullable(),
-});
-
-type PlantInfo = z.infer<typeof checkPlantInfo>;
+import { PlantInfo, checkPlantInfo } from "@/zod-schemas/plant-validation";
 
 const Plant = () => {
   const [token, setToken] = useState<string | null>(null);
@@ -76,6 +29,7 @@ const Plant = () => {
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
   const { toast } = useToast();
+
   useEffect(() => {
     if (plantId === undefined || isNaN(plantId)) {
       return;
@@ -398,7 +352,10 @@ const Plant = () => {
             ></img>
             <p className="text-sm hidden md:text-base md:block">Water Plant</p>
           </button>
-          <button className="my-4 mx-2 font-mono border-solid border-[1px] border-yellow-300 rounded-md py-2 px-4 bg-yellow-100/20 hover:bg-yellow-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4">
+          <button
+            onClick={() => router.push(`/my-plants/${plantId}/edit`)}
+            className="my-4 mx-2 font-mono border-solid border-[1px] border-yellow-300 rounded-md py-2 px-4 bg-yellow-100/20 hover:bg-yellow-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4"
+          >
             <img
               src="/edit.svg"
               alt="icon of paper and pen"

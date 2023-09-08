@@ -36,7 +36,7 @@ const Login = () => {
     // save token and user id to a local storage
     localStorage.setItem("token", response.data.access_token);
 
-    router.push("/");
+    router.push("/my-plants");
   };
 
   return (
