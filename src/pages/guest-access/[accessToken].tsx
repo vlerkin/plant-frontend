@@ -23,8 +23,9 @@ type UserInfo = z.infer<typeof checkUserInfo>;
 
 const GuestAuth = () => {
   const router = useRouter();
-  const [isGuesToken, setGuestToken] = useState<boolean>(false);
+  const [isGuestToken, setGuestToken] = useState<boolean>(false);
   const [loggedUser, setLoggedUser] = useState<UserInfo | null>(null);
+
   useEffect(() => {
     const accessToken = router.query.accessToken;
     if (!accessToken) {
@@ -72,11 +73,13 @@ const GuestAuth = () => {
         console.log(error);
       }
     }
-  }, [isGuesToken, router.query.accessToken]);
+  }, [isGuestToken, router.query.accessToken]);
+
   const handleLogOutClick = () => {
     localStorage.removeItem("token");
     setGuestToken(true);
   };
+
   if (!loggedUser) {
     return (
       <main className="h-screen flex justify-center bg-[#57886C]">
@@ -88,7 +91,8 @@ const GuestAuth = () => {
       </main>
     );
   }
-  if (isGuesToken === false) {
+
+  if (isGuestToken === false) {
     return (
       <AlertDialog>
         <AlertDialogTrigger asChild>
@@ -119,6 +123,7 @@ const GuestAuth = () => {
       </AlertDialog>
     );
   }
+
   return (
     <main className="h-screen flex justify-center items-center bg-[#57886C]">
       <div>
