@@ -158,14 +158,14 @@ const Plant = () => {
       <NavBar />
       <Toaster />
       <div className="backdrop-blur-md bg-gray-900/10 rounded-md w-full text-white my-20 mx-4 md:w-2/5 lg:w-2/5">
-        <div className="md:flex md:flex-row md:items-center">
+        <div className="md:flex md:flex-row md:items-center md:justify-around">
           {plantInfo.info.photo_url ? (
             <div
-              className="bg-center bg-no-repeat rounded-t-md bg-cover w-full h-48 md:rounded-full md:w-44 md:h-44 md:m-6 lg:rounded-full lg:w-44 lg:h-44 lg:m-6 "
+              className="bg-center bg-no-repeat rounded-t-md bg-cover w-full h-48 md:rounded-full md:w-44 md:h-44 md:m-6 lg:rounded-full lg:w-44 lg:h-44 lg:m-6"
               style={{ backgroundImage: `url(${plantInfo.info.photo_url})` }}
             ></div>
           ) : (
-            <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover w-full h-48"></div>
+            <div className="bg-[url('/template.jpg')] bg-center bg-no-repeat rounded-t-md bg-cover w-full h-48 md:rounded-full md:w-44 md:h-44 md:m-6 lg:rounded-full lg:w-44 lg:h-44 lg:m-6"></div>
           )}
           <div className="flex flex-col m-4 md:inline">
             <div className="flex flex-col justify-center mb-2">
