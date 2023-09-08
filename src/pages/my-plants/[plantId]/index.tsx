@@ -340,7 +340,7 @@ const Plant = () => {
         <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2">
           Available actions
         </p>
-        <div className="flex justify-around">
+        <div className="flex justify-around flex-wrap">
           <button
             onClick={() => handleWateringClick()}
             className="my-4 mx-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
@@ -351,6 +351,30 @@ const Plant = () => {
               className="inline w-12 h-12 md:hidden lg:hidden"
             ></img>
             <p className="text-sm hidden md:text-base md:block">Water Plant</p>
+          </button>
+          <button
+            onClick={() => handleWateringClick()}
+            className="my-4 mx-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+          >
+            <img
+              src="/fertiliser.svg"
+              alt="icon of fertiliser"
+              className="inline w-12 h-12 md:hidden lg:hidden"
+            ></img>
+            <p className="text-sm hidden md:text-base md:block">
+              Log Fertilizing
+            </p>
+          </button>
+          <button
+            onClick={() => handleWateringClick()}
+            className="my-4 mx-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+          >
+            <img
+              src="/medication.svg"
+              alt="icon of medications"
+              className="inline w-12 h-12 md:hidden lg:hidden"
+            ></img>
+            <p className="text-sm hidden md:text-base md:block">Log Disease</p>
           </button>
           <button
             onClick={() => router.push(`/my-plants/${plantId}/edit`)}
