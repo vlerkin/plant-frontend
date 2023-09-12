@@ -3,6 +3,11 @@ import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AuthUser } from "@/interfaces/user_interfaces";
+import {
+  getSpecificPlant,
+  updatePlantInfo,
+  uploadPlantPhoto,
+} from "@/lib/plantApi";
 import { getAuthUser } from "@/lib/utils";
 import {
   DataFromAddPlantForm,
@@ -11,7 +16,6 @@ import {
   checkPlantInfo,
 } from "@/zod-schemas/plantValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -19,7 +23,6 @@ import { Controller, useForm } from "react-hook-form";
 const EditPlant = () => {
   const router = useRouter();
   const plantId = Number(router.query.plantId);
-  const [token, setToken] = useState<string | null>(null);
   const [plantInfo, setPlantInfo] = useState<PlantInfo | null>(null);
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
@@ -33,7 +36,6 @@ const EditPlant = () => {
       router.push("/login");
       return;
     }
-    setToken(token);
 
     const authenticateUser = async () => {
       const authUser = await getAuthUser();
@@ -42,13 +44,8 @@ const EditPlant = () => {
     };
     authenticateUser();
 
-    const getPlantInfoFromApi = async (token: string) => {
-      const response = await axios.get(
-        `http://localhost:8000/my-plants/${plantId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    const getPlantInfoFromApi = async () => {
+      const response = await getSpecificPlant(plantId);
       const parsedResponse = checkPlantInfo.safeParse(response.data);
       if (parsedResponse.success === true) {
         setPlantInfo(parsedResponse.data);
@@ -56,7 +53,7 @@ const EditPlant = () => {
         console.log(parsedResponse.error.flatten());
       }
     };
-    getPlantInfoFromApi(token);
+    getPlantInfoFromApi();
   }, [plantId]);
 
   const {
@@ -82,29 +79,16 @@ const EditPlant = () => {
   const handleFormSubmit = async (data: DataFromAddPlantForm) => {
     try {
       let photoName = null;
-      // on case user provided new photo upload it and give the path for rendering
+      // in case user provided new photo upload it and give the path for rendering
       if (data.photo[0]) {
-        const res = await axios.post(
-          "http://localhost:8000/upload/plant",
-          {
-            file: data.photo[0],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
+        const res = await uploadPlantPhoto(data.photo[0]);
         photoName = res.data.filename;
       }
       // if user did not provide a new photo but we have one already in db
       if (plantInfo.info.photo_url != null && !data.photo[0]) {
         photoName = plantInfo.info.photo_url.split("com")[1].slice(1);
       }
-      await axios.patch(
-        `http://localhost:8000/my-plants/${plantInfo.info.id}`,
+      await updatePlantInfo(
         {
           name: data.name,
           photo: photoName,
@@ -115,11 +99,7 @@ const EditPlant = () => {
           comment: data.comment === "nothing yet" ? null : data.comment,
           species: data.species === "nothing yet" ? null : data.species,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        plantInfo.info.id
       );
 
       router.push("/my-plants");

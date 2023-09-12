@@ -18,6 +18,24 @@ export const uploadPlantPhoto = (photo: any) => {
   });
 };
 
+export type UpdatePlantInfoParams = {
+  name: string;
+  photo: string;
+  howOftenWatering: number;
+  waterVolume: number;
+  light: string;
+  location: string;
+  comment: string | null;
+  species: string | null;
+};
+
+export const updatePlantInfo = (
+  params: UpdatePlantInfoParams,
+  plantId: number
+) => {
+  return apiClient.patch(`/my-plants/${plantId}`, params);
+};
+
 export type CreateNewPlantParams = {
   name: string;
   photo: string;
