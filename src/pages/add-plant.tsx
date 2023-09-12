@@ -2,26 +2,19 @@ import ErrorMessage from "@/components/error";
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  LightEnum,
-  LocationEnum,
-  UploadResults,
-} from "@/interfaces/plant_interfaces";
 import { AuthUser } from "@/interfaces/user_interfaces";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE, getAuthUser } from "@/lib/utils";
+import { createNewPlant, uploadPlantPhoto } from "@/lib/plantApi";
+import { getAuthUser } from "@/lib/utils";
 import {
   DataFromAddPlantForm,
   checkAddPlantFormData,
 } from "@/zod-schemas/plantValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 const AddPlant = () => {
-  const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
@@ -31,8 +24,6 @@ const AddPlant = () => {
     if (token == null) {
       router.push("/login");
       return;
-    } else {
-      setToken(token);
     }
 
     const authenticateUser = async () => {
@@ -62,41 +53,19 @@ const AddPlant = () => {
     try {
       let photoName = null;
       if (data.photo[0]) {
-        const res = await axios.post(
-          "http://localhost:8000/upload/plant",
-          {
-            file: data.photo[0],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
+        const res = await uploadPlantPhoto(data.photo[0]);
         photoName = res.data.filename;
       }
-
-      await axios.post(
-        "http://localhost:8000/my-plants",
-        {
-          name: data.name,
-          photo: photoName,
-          howOftenWatering: data.watering,
-          waterVolume: data.volume,
-          light: data.light,
-          location: data.location,
-          comment: data.comment,
-          species: data.species,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      await createNewPlant({
+        name: data.name,
+        photo: photoName,
+        howOftenWatering: data.watering,
+        waterVolume: data.volume,
+        light: data.light,
+        location: data.location,
+        comment: data.comment,
+        species: data.species,
+      });
       router.push("/my-plants");
     } catch (error) {
       console.log("Something went wrong!");
