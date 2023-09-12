@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   AlertDialog,
@@ -12,14 +11,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/router";
-import { z } from "zod";
-
-const checkUserInfo = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  photo: z.string().nullable(),
-});
-type UserInfo = z.infer<typeof checkUserInfo>;
+import { UserInfo, checkUserInfo } from "@/zod-schemas/userValidation";
+import { authorizeGuestToken, getUser } from "@/lib/userApi";
+import { deleteToken, getToken, setToken } from "@/lib/tokenApi";
 
 const GuestAuth = () => {
   const router = useRouter();
@@ -31,18 +25,15 @@ const GuestAuth = () => {
     if (!accessToken) {
       return;
     }
-    const tokenFromLocalStorage: string | null | undefined =
-      localStorage.getItem("token");
+    const tokenFromLocalStorage: string | null | undefined = getToken();
     if (
       (tokenFromLocalStorage == null || tokenFromLocalStorage == undefined) &&
       accessToken != undefined
     ) {
       try {
         const validateToken = async () => {
-          const response = await axios.get(
-            `http://localhost:8000/access-tokens/authorize/${accessToken}`
-          );
-          localStorage.setItem("token", response.data.guest_token);
+          const response = await authorizeGuestToken(accessToken);
+          setToken(response.data.guest_token);
         };
         validateToken();
         router.push("/my-plants");
@@ -54,10 +45,8 @@ const GuestAuth = () => {
       tokenFromLocalStorage != undefined
     ) {
       try {
-        const getUserFromApi = async (token: string) => {
-          const response = await axios.get("http://localhost:8000/me", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+        const getUserFromApi = async () => {
+          const response = await getUser();
           const parsedResponse = checkUserInfo.safeParse(response.data);
           if (parsedResponse.success === true) {
             setLoggedUser(parsedResponse.data);
@@ -65,7 +54,7 @@ const GuestAuth = () => {
             console.log(parsedResponse.error.flatten());
           }
         };
-        getUserFromApi(tokenFromLocalStorage);
+        getUserFromApi();
         setGuestToken(false);
       } catch (error) {
         console.log(error);
@@ -74,7 +63,7 @@ const GuestAuth = () => {
   }, [isGuestToken, router.query.accessToken]);
 
   const handleLogOutClick = () => {
-    localStorage.removeItem("token");
+    deleteToken();
     setGuestToken(true);
   };
 

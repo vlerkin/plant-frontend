@@ -66,3 +66,7 @@ type updateUserParams = {
 export const updateUser = (params: updateUserParams) => {
   return apiClient.patch("/me", params);
 };
+
+export const authorizeGuestToken = (guestToken: string | string[]) => {
+  return apiClient.get(`/access-tokens/authorize/${guestToken}`);
+};
