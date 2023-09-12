@@ -31,8 +31,6 @@ const GuestAuth = () => {
     if (!accessToken) {
       return;
     }
-    console.log(accessToken);
-    console.log(router.query.accessToken);
     const tokenFromLocalStorage: string | null | undefined =
       localStorage.getItem("token");
     if (

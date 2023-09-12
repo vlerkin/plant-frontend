@@ -47,9 +47,12 @@ const MyPlants = () => {
     authenticateUser();
 
     const getPlantsFromApi = async (token: string) => {
-      const response = await axios.get("http://localhost:8000/my-plants", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_API_URL + "/my-plants",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const parsedResponse = ArrayDataApi.safeParse(response.data);
       if (parsedResponse.success === true) {
         setMyPlants(parsedResponse.data);
@@ -118,16 +121,6 @@ const MyPlants = () => {
             </button>
           )}
 
-          <button className="m-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20">
-            <img
-              src="/watercan.svg"
-              alt="icon of watering can"
-              className="inline w-12 h-12 md:hidden lg:hidden"
-            ></img>
-            <p className="text-sm hidden md:text-base md:block">
-              Water Several Plants
-            </p>
-          </button>
           {!authUserState.is_guest && (
             <button
               onClick={() => router.push("/add-plant")}
@@ -164,14 +157,14 @@ const MyPlants = () => {
               >
                 {aPlant.photo_url ? (
                   <div
-                    className="bg-center rounded-l-md bg-no-repeat bg-cover h-32 w-24 md:w-60 md:h-60"
+                    className="bg-center rounded-l-md bg-no-repeat bg-cover h-36 w-24 md:w-60 md:h-60"
                     style={{ backgroundImage: `url(${aPlant.photo_url})` }}
                   ></div>
                 ) : (
-                  <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover h-32 w-24 md:w-60 md:h-60"></div>
+                  <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover h-36 w-24 md:w-60 md:h-60"></div>
                 )}
                 <div className="flex flex-col items-center justify-around ml-4 p-2">
-                  <span className="inline font-semibold md:text-xl text-center">
+                  <span className="inline font-semibold md:text-xl text-center mt-2">
                     {aPlant.name}
                   </span>{" "}
                   {aPlant.is_healthy ? (
@@ -220,6 +213,9 @@ const MyPlants = () => {
                       alt="leaf icon -  healthy"
                     />
                   )}
+                  <button className="m-2 font-mono border-solid border-[1px] border-white rounded-md py-[4px] px-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2  text-white md:px-4 lg:px-4 active:bg-sky-200/20">
+                    Water Plant
+                  </button>
                 </div>
               </div>
             );
