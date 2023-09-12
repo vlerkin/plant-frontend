@@ -1,7 +1,5 @@
 import React from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/error";
 import { useForm } from "react-hook-form";
@@ -9,12 +7,10 @@ import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { loginUser } from "@/lib/userApi";
-
-const checkFormData = z.object({
-  email: z.string().email(),
-  password: z.string().min(10),
-});
-type DataFromForm = z.infer<typeof checkFormData>;
+import {
+  DataFromLoginForm,
+  checkLoginFormData,
+} from "@/zod-schemas/userValidation";
 
 const Login = () => {
   const router = useRouter();
@@ -23,10 +19,10 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<DataFromForm>({
-    resolver: zodResolver(checkFormData),
+  } = useForm<DataFromLoginForm>({
+    resolver: zodResolver(checkLoginFormData),
   });
-  const handleFormSubmit = async (data: DataFromForm) => {
+  const handleFormSubmit = async (data: DataFromLoginForm) => {
     const email = data.email;
     const password = data.password;
 
@@ -34,7 +30,6 @@ const Login = () => {
       email: email,
       password: password,
     });
-    // save token and user id to a local storage
     localStorage.setItem("token", response.data.access_token);
 
     router.push("/my-plants");

@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "@/components/error";
@@ -7,14 +6,10 @@ import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { registerUser } from "@/lib/userApi";
-
-const checkFormData = z.object({
-  name: z.string().max(100),
-  email: z.string().email(),
-  password: z.string().min(10),
-});
-
-type DataFromForm = z.infer<typeof checkFormData>;
+import {
+  DataFromRegisterForm,
+  checkRegisterFormData,
+} from "@/zod-schemas/userValidation";
 
 const Register = () => {
   const router = useRouter();
@@ -23,11 +18,11 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<DataFromForm>({
-    resolver: zodResolver(checkFormData),
+  } = useForm<DataFromRegisterForm>({
+    resolver: zodResolver(checkRegisterFormData),
   });
 
-  const handleFormSubmit = async (data: DataFromForm) => {
+  const handleFormSubmit = async (data: DataFromRegisterForm) => {
     const name = data.name;
     const email = data.email;
     const password = data.password;

@@ -19,3 +19,18 @@ export const checkTokenInfo = z.array(
 );
 
 export type AccessTokenInfo = z.infer<typeof checkTokenInfo>;
+
+export const checkRegisterFormData = z.object({
+  name: z.string().max(100),
+  email: z.string().email(),
+  password: z.string().min(10),
+});
+
+export type DataFromRegisterForm = z.infer<typeof checkRegisterFormData>;
+
+export const checkLoginFormData = z.object({
+  email: z.string().email(),
+  password: z.string().min(10),
+});
+
+export type DataFromLoginForm = z.infer<typeof checkLoginFormData>;
