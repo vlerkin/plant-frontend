@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { createNewPlant, uploadPlantPhoto } from "@/lib/plantApi";
+import { getToken } from "@/lib/tokenApi";
 import { getAuthUser } from "@/lib/utils";
 import {
   DataFromAddPlantForm,
@@ -20,8 +21,8 @@ const AddPlant = () => {
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const token: string | null = localStorage.getItem("token");
-    if (token == null) {
+    const token: string | undefined = getToken();
+    if (token === undefined || null) {
       router.push("/login");
       return;
     }

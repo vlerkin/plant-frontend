@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { getMyPlants, waterPlant } from "@/lib/plantApi";
+import { getToken } from "@/lib/tokenApi";
 import { getAuthUser } from "@/lib/utils";
 import { MyPlant, arrayMyPlantsDataApi } from "@/zod-schemas/plantValidation";
 import { useRouter } from "next/router";
@@ -15,8 +16,8 @@ const MyPlants = () => {
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
   useEffect(() => {
-    const tokenFromLC = localStorage.getItem("token");
-    if (tokenFromLC === null) {
+    const tokenFromLC = getToken();
+    if (tokenFromLC === undefined || null) {
       router.push("/login");
       return;
     }

@@ -8,6 +8,7 @@ import {
   updatePlantInfo,
   uploadPlantPhoto,
 } from "@/lib/plantApi";
+import { getToken } from "@/lib/tokenApi";
 import { getAuthUser } from "@/lib/utils";
 import {
   DataFromAddPlantForm,
@@ -31,8 +32,8 @@ const EditPlant = () => {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    if (token === null) {
+    const token = getToken();
+    if (token === undefined || null) {
       router.push("/login");
       return;
     }

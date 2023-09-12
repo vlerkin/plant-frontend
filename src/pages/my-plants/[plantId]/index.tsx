@@ -22,6 +22,7 @@ import {
   getSpecificPlant,
   waterPlant,
 } from "@/lib/plantApi";
+import { getToken } from "@/lib/tokenApi";
 
 const Plant = () => {
   const [plantInfo, setPlantInfo] = useState<PlantInfo | null>(null);
@@ -36,7 +37,7 @@ const Plant = () => {
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (token === null) {
       router.push("/login");
       return;
