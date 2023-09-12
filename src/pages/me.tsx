@@ -89,7 +89,7 @@ const Profile = () => {
       setUserLoading(false);
     };
     authenticateUser();
-    const getUserFromApi = async (token: string) => {
+    const getUserFromApi = async () => {
       const response = await getUser();
       const parsedResponse = checkUserInfo.safeParse(response.data);
       if (parsedResponse.success === true) {
@@ -98,8 +98,8 @@ const Profile = () => {
         console.log(parsedResponse.error.flatten());
       }
     };
-    getUserFromApi(token);
-    const getAccessTokensFromApi = async (token: string) => {
+    getUserFromApi();
+    const getAccessTokensFromApi = async () => {
       const response = await getAccessTokens();
       const parsedResponse = checkTokenInfo.safeParse(response.data);
       if (parsedResponse.success === true) {
@@ -108,7 +108,7 @@ const Profile = () => {
         console.log(parsedResponse.error.flatten());
       }
     };
-    getAccessTokensFromApi(token);
+    getAccessTokensFromApi();
   }, []);
   const {
     register,

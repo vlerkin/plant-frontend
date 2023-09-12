@@ -1,36 +1,15 @@
 import NavBar from "@/components/navigationBar";
-import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
-import { LightEnum, LocationEnum } from "@/interfaces/plant_interfaces";
 import { AuthUser } from "@/interfaces/user_interfaces";
+import { getMyPlants, waterPlant } from "@/lib/plantApi";
 import { getAuthUser } from "@/lib/utils";
-import axios from "axios";
+import { MyPlant, arrayMyPlantsDataApi } from "@/zod-schemas/plantValidation";
 import { useRouter } from "next/router";
-import { ReactEventHandler, useEffect, useState } from "react";
-import { z } from "zod";
-
-const checkMyPlants = z.object({
-  id: z.number().int().gte(0),
-  name: z.string().max(100),
-  howOftenWatering: z.number().int().gte(0),
-  light: LightEnum,
-  location: LocationEnum,
-  species: z.string().nullable(),
-  photo_url: z.string().nullable(),
-  waterVolume: z.number(),
-  comment: z.string().nullable(),
-  userId: z.number().int(),
-  is_healthy: z.boolean(),
-  time_to_water: z.boolean(),
-});
-
-type MyPlant = z.infer<typeof checkMyPlants>;
-const ArrayDataApi = z.array(checkMyPlants);
+import { useEffect, useState } from "react";
 
 const MyPlants = () => {
   const router = useRouter();
-  const [token, setToken] = useState<string | null>(null);
   const [myPlants, setMyPlants] = useState<MyPlant[] | null>(null);
   const [filterState, setFilterState] = useState<boolean>(false);
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
@@ -40,8 +19,6 @@ const MyPlants = () => {
     if (tokenFromLC === null) {
       router.push("/login");
       return;
-    } else {
-      setToken(tokenFromLC);
     }
     // check if token not expired and wait until function returns the answer
     const authenticateUser = async () => {
@@ -51,21 +28,16 @@ const MyPlants = () => {
     };
     authenticateUser();
 
-    const getPlantsFromApi = async (token: string) => {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_API_URL + "/my-plants",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const parsedResponse = ArrayDataApi.safeParse(response.data);
+    const getPlantsFromApi = async () => {
+      const response = await getMyPlants();
+      const parsedResponse = arrayMyPlantsDataApi.safeParse(response.data);
       if (parsedResponse.success === true) {
         setMyPlants(parsedResponse.data);
       } else {
         console.log(parsedResponse.error.flatten());
       }
     };
-    getPlantsFromApi(tokenFromLC);
+    getPlantsFromApi();
   }, []);
   if (!myPlants) {
     return <p>Loading...</p>;
@@ -85,26 +57,15 @@ const MyPlants = () => {
   ) => {
     e.stopPropagation();
     try {
-      await axios.post(
-        `http://localhost:8000/my-plants/${plantId}/watering`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await waterPlant(plantId);
 
       toast({
         title: "Success!",
         description: "Plant watered",
       });
 
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_API_URL + "/my-plants",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const parsedResponse = ArrayDataApi.safeParse(response.data);
+      const response = await getMyPlants();
+      const parsedResponse = arrayMyPlantsDataApi.safeParse(response.data);
       if (parsedResponse.success === true) {
         setMyPlants(parsedResponse.data);
       } else {
@@ -163,7 +124,7 @@ const MyPlants = () => {
           )}
         </div>
       </div>
-      {/* <div className="grid gap-4 grid-cols-2 overflow-scroll p-10 md:grid-cols-6 md:gap-8 font-mono"> */}
+
       <div className="grid gap-4 overflow-scroll p-10 grid-cols-6 md:gap-8 font-mono">
         {myPlants.length === 0 && (
           <p className="col-span-2 col-start-2 text-center text-sm md:text-base lg:text-base">
@@ -182,16 +143,11 @@ const MyPlants = () => {
                 className="col-span-6 md:col-span-3 lg:col-span-2 flex min-h-[60%] text-sm backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative active:translate-y-2 hover:-translate-y-2 hover:cursor-pointer hover:shadow-2xl md:text-base lg:text-base"
               >
                 {aPlant.photo_url ? (
-                  // <div
-                  //   className="bg-center rounded-l-md bg-no-repeat bg-cover h-full w-[40%] md:w-60 md:h-60"
-                  //   style={{ backgroundImage: `url(${aPlant.photo_url})` }}
-                  // ></div>
                   <div
                     className="bg-center rounded-l-md bg-no-repeat bg-cover w-1/3"
                     style={{ backgroundImage: `url(${aPlant.photo_url})` }}
                   ></div>
                 ) : (
-                  // <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover h-full w-28 md:w-60 md:h-60"></div>
                   <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover h-full w-28 md:w-60 md:h-60"></div>
                 )}
                 <div className="flex flex-col items-start justify-around ml-2 p-2 w-2/3">

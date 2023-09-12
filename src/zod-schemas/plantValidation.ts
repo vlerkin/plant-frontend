@@ -73,3 +73,21 @@ export const checkAddPlantFormData = z.object({
 });
 
 export type DataFromAddPlantForm = z.infer<typeof checkAddPlantFormData>;
+
+export const checkMyPlants = z.object({
+  id: z.number().int().gte(0),
+  name: z.string().max(100),
+  howOftenWatering: z.number().int().gte(0),
+  light: LightEnum,
+  location: LocationEnum,
+  species: z.string().nullable(),
+  photo_url: z.string().nullable(),
+  waterVolume: z.number(),
+  comment: z.string().nullable(),
+  userId: z.number().int(),
+  is_healthy: z.boolean(),
+  time_to_water: z.boolean(),
+});
+
+export type MyPlant = z.infer<typeof checkMyPlants>;
+export const arrayMyPlantsDataApi = z.array(checkMyPlants);
