@@ -1,9 +1,6 @@
 import NavBar from "@/components/navigationBar";
-import { LightEnum, LocationEnum } from "@/interfaces/plant_interfaces";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import {
@@ -20,9 +17,13 @@ import {
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { getAuthUser, numberToMonth } from "@/lib/utils";
 import { PlantInfo, checkPlantInfo } from "@/zod-schemas/plantValidation";
+import {
+  deleteSpecificPlant,
+  getSpecificPlant,
+  waterPlant,
+} from "@/lib/plantApi";
 
 const Plant = () => {
-  const [token, setToken] = useState<string | null>(null);
   const [plantInfo, setPlantInfo] = useState<PlantInfo | null>(null);
   const router = useRouter();
   const plantId = Number(router.query.plantId);
@@ -40,7 +41,6 @@ const Plant = () => {
       router.push("/login");
       return;
     }
-    setToken(token);
 
     const authenticateUser = async () => {
       const authUser = await getAuthUser();
@@ -49,13 +49,8 @@ const Plant = () => {
     };
     authenticateUser();
 
-    const getPlantInfoFromApi = async (token: string) => {
-      const response = await axios.get(
-        `http://localhost:8000/my-plants/${plantId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    const getPlantInfoFromApi = async () => {
+      const response = await getSpecificPlant(plantId);
       const parsedResponse = checkPlantInfo.safeParse(response.data);
       if (parsedResponse.success === true) {
         setPlantInfo(parsedResponse.data);
@@ -63,7 +58,7 @@ const Plant = () => {
         console.log(parsedResponse.error.flatten());
       }
     };
-    getPlantInfoFromApi(token);
+    getPlantInfoFromApi();
   }, [plantId]);
 
   if (!plantInfo) {
@@ -79,14 +74,7 @@ const Plant = () => {
 
   const handleWateringClick = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:8000/my-plants/${plantId}/watering`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      console.log(response);
+      await waterPlant(plantId);
       toast({
         title: "Success!",
         description: "Plant watered",
@@ -98,9 +86,7 @@ const Plant = () => {
 
   const handleDeleteClick = async () => {
     try {
-      await axios.delete(`http://localhost:8000/my-plants/${plantId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await deleteSpecificPlant(plantId);
       router.push("/my-plants");
     } catch (error) {
       console.log(error);
