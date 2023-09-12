@@ -138,7 +138,8 @@ const MyPlants = () => {
           )}
         </div>
       </div>
-      <div className="grid gap-4 grid-cols-2 overflow-scroll p-10 md:grid-cols-6 md:gap-8 font-mono">
+      {/* <div className="grid gap-4 grid-cols-2 overflow-scroll p-10 md:grid-cols-6 md:gap-8 font-mono"> */}
+      <div className="grid gap-4 overflow-scroll p-10 grid-cols-6 md:gap-8 font-mono">
         {myPlants.length === 0 && (
           <p className="col-span-2 col-start-2 text-center text-sm md:text-base lg:text-base">
             You have no plants yet
@@ -153,18 +154,23 @@ const MyPlants = () => {
               <div
                 key={aPlant.id}
                 onClick={() => handleClickPlant(aPlant.id)}
-                className="col-span-2 flex min-h-[60%] text-sm backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative active:translate-y-2 hover:-translate-y-2 hover:cursor-pointer hover:shadow-2xl md:text-base lg:text-base"
+                className="col-span-6 md:col-span-3 lg:col-span-2 flex min-h-[60%] text-sm backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative active:translate-y-2 hover:-translate-y-2 hover:cursor-pointer hover:shadow-2xl md:text-base lg:text-base"
               >
                 {aPlant.photo_url ? (
+                  // <div
+                  //   className="bg-center rounded-l-md bg-no-repeat bg-cover h-full w-[40%] md:w-60 md:h-60"
+                  //   style={{ backgroundImage: `url(${aPlant.photo_url})` }}
+                  // ></div>
                   <div
-                    className="bg-center rounded-l-md bg-no-repeat bg-cover h-36 w-24 md:w-60 md:h-60"
+                    className="bg-center rounded-l-md bg-no-repeat bg-cover w-1/3"
                     style={{ backgroundImage: `url(${aPlant.photo_url})` }}
                   ></div>
                 ) : (
-                  <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover h-36 w-24 md:w-60 md:h-60"></div>
+                  // <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover h-full w-28 md:w-60 md:h-60"></div>
+                  <div className="bg-[url('/template.jpg')] rounded-l-md bg-center bg-no-repeat bg-cover h-full w-28 md:w-60 md:h-60"></div>
                 )}
-                <div className="flex flex-col items-center justify-around ml-4 p-2">
-                  <span className="inline font-semibold md:text-xl text-center mt-2">
+                <div className="flex flex-col items-start justify-around ml-2 p-2 w-2/3">
+                  <span className="inline font-semibold md:text-xl text-center mt-2 mb-2">
                     {aPlant.name}
                   </span>{" "}
                   {aPlant.is_healthy ? (
@@ -188,7 +194,7 @@ const MyPlants = () => {
                         className="inline pb-[1px] mr-2 h-6 w-6"
                       />
 
-                      <span>
+                      <span className="my-2">
                         every {aPlant.howOftenWatering}{" "}
                         {aPlant.howOftenWatering === 1 ? (
                           <span> day</span>
@@ -213,7 +219,7 @@ const MyPlants = () => {
                       alt="leaf icon -  healthy"
                     />
                   )}
-                  <button className="m-2 font-mono border-solid border-[1px] border-white rounded-md py-[4px] px-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2  text-white md:px-4 lg:px-4 active:bg-sky-200/20">
+                  <button className="my-2 font-mono border-solid border-[1px] border-white rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2  text-white md:px-4 lg:px-4 active:bg-sky-200/20">
                     Water Plant
                   </button>
                 </div>
