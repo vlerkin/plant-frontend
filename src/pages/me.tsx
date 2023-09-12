@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Settings, Share, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +48,15 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "@/components/error";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const checkUserInfo = z.object({
   name: z.string(),
@@ -168,6 +177,15 @@ const Profile = () => {
         title: "Success!",
         description: "New access permission created",
       });
+      const response = await axios.get("http://localhost:8000/access-tokens", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const parsedResponse = checkTokenInfo.safeParse(response.data);
+      if (parsedResponse.success === true) {
+        setAccessTokens(parsedResponse.data);
+      } else {
+        console.log(parsedResponse.error.flatten());
+      }
     } catch (error) {
       console.log(error);
     }
@@ -182,6 +200,15 @@ const Profile = () => {
         title: "Success!",
         description: "Permission deleted",
       });
+      const response = await axios.get("http://localhost:8000/access-tokens", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const parsedResponse = checkTokenInfo.safeParse(response.data);
+      if (parsedResponse.success === true) {
+        setAccessTokens(parsedResponse.data);
+      } else {
+        console.log(parsedResponse.error.flatten());
+      }
     } catch (error) {
       console.log(error);
     }
@@ -222,6 +249,9 @@ const Profile = () => {
       console.log(error);
     }
   };
+  const handleSharePlantsClick = (token: string) => {
+    router.push(`/guest-access/${token}/share`);
+  };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen">
       <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
@@ -233,10 +263,10 @@ const Profile = () => {
       </div>
       <div className="flex justify-center">
         <div className="flex flex-col items-center -mt-10 mb-10 backdrop-blur-md max-h-[60%] bg-gray-900/10 p-6 rounded-md text-white text-sm w-4/5 md:-mt-20 lg:-mt-20 md:w-2/5 lg:2/5 md:text-base lg:text-base">
-          <div className="flex flex-col items-center md:flex-row lg:flex-row">
+          <div className="flex flex-col items-center lg:flex-row justify-around w-full">
             {userInfo.photo ? (
               <div
-                className="relative bg-center bg-no-repeat rounded-full bg-cover w-32 h-32 md:rounded-md md:w-44 md:h-44 md:m-6 lg:rounded-full lg:w-44 lg:h-44 lg:m-6"
+                className="relative bg-center bg-no-repeat mt-4 rounded-full bg-cover w-32 h-32 shrink-0 md:w-32 md:h-32 lg:w-44 lg:h-44"
                 style={{ backgroundImage: `url(${userInfo.photo})` }}
               >
                 <Dialog>
@@ -293,7 +323,7 @@ const Profile = () => {
                 </Dialog>
               </div>
             ) : (
-              <div className="relative bg-[url('/user.png')] rounded-full bg-center bg-no-repeat bg-auto border-white border-solid border-[1px] w-32 h-32 md:w-44 md:h-44 md:m-6 md:rounded-md lg:rounded-full lg:w-44 lg:h-44 lg:m-6">
+              <div className="relative bg-[url('/user.png')] bg-center bg-no-repeat mt-4 rounded-full bg-cover w-32 h-32 shrink-0 md:w-32 md:h-32 lg:w-44 lg:h-44">
                 <Dialog>
                   <DialogTrigger asChild>
                     <button>
@@ -349,7 +379,7 @@ const Profile = () => {
               </div>
             )}
 
-            <div className="flex flex-col items-center whitespace-pre-line">
+            <div className="flex flex-col whitespace-pre-line ml-0 my-2 items-center lg:items-start md:ml-2 lg:ml-2">
               <p className="font-semibold text-base md:text-lg lg:text-lg">
                 {userInfo.name}
               </p>
@@ -382,47 +412,70 @@ const Profile = () => {
                     }{" "}
                     {aToken.endDate.split("T")[0].split("-")[2]}
                   </span>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <button className="hover:cursor-pointer">
-                        <img
-                          src="/remove.png"
-                          alt="icon of a trash bin"
-                          className="inline h-6 w-6 md:hidden lg:hidden"
-                        />
-                        <p className="text-sm hidden md:block border-solid border-[1px] border-white rounded-md p-2  bg-sky-100/20 hover:bg-[#81A684]">
-                          Delete Permission
-                        </p>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="inline mx-2">
+                        <Settings className="mr-2 h-6 w-6" />
                       </button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete your guest's token data from our servers.
-                          Delete permission with name {aToken.nameToken}?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleRemoveTokenClick(aToken.id)}
-                        >
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                      <DropdownMenuLabel>Guest Access</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          <Share className="mr-2 h-4 w-4" />
+                          <button
+                            onClick={() => handleSharePlantsClick(aToken.token)}
+                          >
+                            <span>Share my plants</span>
+                          </button>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <button
+                              onClick={() => handleRemoveTokenClick(aToken.id)}
+                            >
+                              <p>Delete permission</p>
+                            </button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete your guest's token data from
+                                our servers. Delete permission with name{" "}
+                                {aToken.nameToken}?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleRemoveTokenClick(aToken.id)
+                                }
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               );
             })}
           </Hidden>
           <Hidden hide={"Hide Form"} show={"Create permission for access"}>
             <form
-              className="border-white border-dashed border-[1px] rounded-md p-4"
+              className="border-white border-dashed border-[1px] rounded-md p-4 mb-4"
               onSubmit={handleFormSubmit}
             >
               <div className="flex flex-col items-center justify-center">

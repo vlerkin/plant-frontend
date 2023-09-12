@@ -33,7 +33,7 @@ const ShareController: FC<Props> = ({
   };
 
   return (
-    <button onClick={handleOnClick} type="button">
+    <button className="mt-4" onClick={handleOnClick} type="button">
       {children}
     </button>
   );
