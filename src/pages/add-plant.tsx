@@ -12,7 +12,7 @@ import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE, getAuthUser } from "@/lib/utils";
 import {
   DataFromAddPlantForm,
   checkAddPlantFormData,
-} from "@/zod-schemas/plant-validation";
+} from "@/zod-schemas/plantValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/router";

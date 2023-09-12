@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import axios from "axios";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -7,6 +6,7 @@ import ErrorMessage from "@/components/error";
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { registerUser } from "@/lib/userApi";
 
 const checkFormData = z.object({
   name: z.string().max(100),
@@ -32,7 +32,7 @@ const Register = () => {
     const email = data.email;
     const password = data.password;
     try {
-      await axios.post(`http://localhost:8000/register`, {
+      await registerUser({
         name: name,
         email: email,
         password: password,

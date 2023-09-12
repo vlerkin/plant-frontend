@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { getAuthUser, numberToMonth } from "@/lib/utils";
-import { PlantInfo, checkPlantInfo } from "@/zod-schemas/plant-validation";
+import { PlantInfo, checkPlantInfo } from "@/zod-schemas/plantValidation";
 
 const Plant = () => {
   const [token, setToken] = useState<string | null>(null);

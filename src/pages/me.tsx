@@ -1,10 +1,8 @@
 import Hidden from "@/components/hidden";
 import NavBar from "@/components/navigationBar";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
 import router from "next/router";
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import {
   Popover,
   PopoverContent,
@@ -14,13 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Settings, Share, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import {
-  ACCEPTED_IMAGE_TYPES,
-  MAX_FILE_SIZE,
-  cn,
-  getAuthUser,
-  numberToMonth,
-} from "@/lib/utils";
+import { cn, getAuthUser, numberToMonth } from "@/lib/utils";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -57,48 +49,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-const checkUserInfo = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  photo: z.string().nullable(),
-});
-type UserInfo = z.infer<typeof checkUserInfo>;
-
-const checkTokenInfo = z.array(
-  z.object({
-    token: z.string(),
-    nameToken: z.string(),
-    userId: z.number().int(),
-    id: z.number().int(),
-    startDate: z.string(),
-    endDate: z.string(),
-  })
-);
-type AccessTokenInfo = z.infer<typeof checkTokenInfo>;
-
-const checkFormData = z.object({
-  photo: z
-    .any()
-    .refine(
-      (files) => !files || !files[0] || files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max image size is 10MB.`
-    )
-    .refine(
-      (files) =>
-        !files || !files[0] || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported."
-    ),
-});
-
-type DataFromForm = z.infer<typeof checkFormData>;
+import {
+  createAccessToken,
+  deleteAccessToken,
+  getAccessTokens,
+  getUser,
+  updateUser,
+  uploadUserPhoto,
+} from "@/lib/userApi";
+import {
+  AccessTokenInfo,
+  UserInfo,
+  checkTokenInfo,
+  checkUserInfo,
+} from "@/zod-schemas/userValidation";
+import {
+  DataFromPhotoUploadForm,
+  checkPhotoUploadFormData,
+} from "@/zod-schemas/photoValidation";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [accessTokens, setAccessTokens] = useState<AccessTokenInfo | null>(
     null
   );
-  const [token, setToken] = useState<string | null>(null);
   const [date, setDate] = useState<Date>();
   const [caretakerName, setCaretakerName] = useState<string>("");
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
@@ -109,7 +83,6 @@ const Profile = () => {
       router.push("/login");
       return;
     }
-    setToken(token);
     const authenticateUser = async () => {
       const authUser = await getAuthUser();
       setAuthUser(authUser);
@@ -117,9 +90,7 @@ const Profile = () => {
     };
     authenticateUser();
     const getUserFromApi = async (token: string) => {
-      const response = await axios.get("http://localhost:8000/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await getUser();
       const parsedResponse = checkUserInfo.safeParse(response.data);
       if (parsedResponse.success === true) {
         setUserInfo(parsedResponse.data);
@@ -129,9 +100,7 @@ const Profile = () => {
     };
     getUserFromApi(token);
     const getAccessTokensFromApi = async (token: string) => {
-      const response = await axios.get("http://localhost:8000/access-tokens", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await getAccessTokens();
       const parsedResponse = checkTokenInfo.safeParse(response.data);
       if (parsedResponse.success === true) {
         setAccessTokens(parsedResponse.data);
@@ -145,8 +114,8 @@ const Profile = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<DataFromForm>({
-    resolver: zodResolver(checkFormData),
+  } = useForm<DataFromPhotoUploadForm>({
+    resolver: zodResolver(checkPhotoUploadFormData),
   });
   if (!userInfo) {
     return <p>Loading...</p>;
@@ -166,20 +135,15 @@ const Profile = () => {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.post(
-        "http://localhost:8000/access-tokens",
-        { guest_name: caretakerName, end_date: date },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      if (date === undefined) {
+        return;
+      }
+      await createAccessToken({ guest_name: caretakerName, end_date: date });
       toast({
         title: "Success!",
         description: "New access permission created",
       });
-      const response = await axios.get("http://localhost:8000/access-tokens", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await getAccessTokens();
       const parsedResponse = checkTokenInfo.safeParse(response.data);
       if (parsedResponse.success === true) {
         setAccessTokens(parsedResponse.data);
@@ -192,17 +156,12 @@ const Profile = () => {
   };
   const handleRemoveTokenClick = async (tokenId: number) => {
     try {
-      await axios.delete("http://localhost:8000/access-tokens", {
-        data: { token_id: tokenId },
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await deleteAccessToken(tokenId);
       toast({
         title: "Success!",
         description: "Permission deleted",
       });
-      const response = await axios.get("http://localhost:8000/access-tokens", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await getAccessTokens();
       const parsedResponse = checkTokenInfo.safeParse(response.data);
       if (parsedResponse.success === true) {
         setAccessTokens(parsedResponse.data);
@@ -214,36 +173,17 @@ const Profile = () => {
     }
   };
 
-  const handlePhotoSubmit = async (data: DataFromForm) => {
+  const handlePhotoSubmit = async (data: DataFromPhotoUploadForm) => {
     console.log("HANDLE PHOTO SUBMIT", data);
     try {
-      const res = await axios.post(
-        "http://localhost:8000/upload/user",
-        {
-          file: data.photo[0],
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await uploadUserPhoto(data.photo[0]);
       const photoName = res.data.filename;
-      await axios.patch(
-        "http://localhost:8000/me",
-        {
-          name: null,
-          photo: photoName,
-          email: null,
-          password: null,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await updateUser({
+        name: null,
+        photo: photoName,
+        email: null,
+        password: null,
+      });
       router.push("/me");
     } catch (error) {
       console.log(error);

@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { loginUser } from "@/lib/userApi";
 
 const checkFormData = z.object({
   email: z.string().email(),
@@ -29,7 +30,7 @@ const Login = () => {
     const email = data.email;
     const password = data.password;
 
-    const response = await axios.post("http://localhost:8000/login", {
+    const response = await loginUser({
       email: email,
       password: password,
     });
