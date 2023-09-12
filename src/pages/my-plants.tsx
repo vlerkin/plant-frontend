@@ -1,11 +1,13 @@
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/toaster";
+import { toast } from "@/components/ui/use-toast";
 import { LightEnum, LocationEnum } from "@/interfaces/plant_interfaces";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { getAuthUser } from "@/lib/utils";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { ReactEventHandler, useEffect, useState } from "react";
 import { z } from "zod";
 
 const checkMyPlants = z.object({
@@ -28,15 +30,18 @@ const ArrayDataApi = z.array(checkMyPlants);
 
 const MyPlants = () => {
   const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
   const [myPlants, setMyPlants] = useState<MyPlant[] | null>(null);
   const [filterState, setFilterState] = useState<boolean>(false);
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token === null) {
+    const tokenFromLC = localStorage.getItem("token");
+    if (tokenFromLC === null) {
       router.push("/login");
       return;
+    } else {
+      setToken(tokenFromLC);
     }
     // check if token not expired and wait until function returns the answer
     const authenticateUser = async () => {
@@ -60,7 +65,7 @@ const MyPlants = () => {
         console.log(parsedResponse.error.flatten());
       }
     };
-    getPlantsFromApi(token);
+    getPlantsFromApi(tokenFromLC);
   }, []);
   if (!myPlants) {
     return <p>Loading...</p>;
@@ -74,10 +79,46 @@ const MyPlants = () => {
   const handleClickPlant = (plant_id: number) => {
     router.push(`/my-plants/${plant_id}`);
   };
+  const handleWateringClick = async (
+    plantId: number,
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+    try {
+      await axios.post(
+        `http://localhost:8000/my-plants/${plantId}/watering`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      toast({
+        title: "Success!",
+        description: "Plant watered",
+      });
+
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_API_URL + "/my-plants",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const parsedResponse = ArrayDataApi.safeParse(response.data);
+      if (parsedResponse.success === true) {
+        setMyPlants(parsedResponse.data);
+      } else {
+        console.log(parsedResponse.error.flatten());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen">
       <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
         <NavBar />
+        <Toaster />
         <h1 className="font-mono -mb-12 font-bold text-xl drop-shadow-2xl text-white md:-mb-4 lg:-md-4 md:text-4xl lg:text-4xl">
           My Plants
         </h1>
@@ -118,22 +159,6 @@ const MyPlants = () => {
                 className="inline h-12 w-12 md:hidden lg:hidden"
               />
               <p className="text-sm hidden md:text-base md:block">Add Plant</p>
-            </button>
-          )}
-
-          {!authUserState.is_guest && (
-            <button
-              onClick={() => router.push("/add-plant")}
-              className="m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
-            >
-              <img
-                src="/share.svg"
-                alt="icon of watering can"
-                className="inline h-12 w-12 md:hidden lg:hidden"
-              />
-              <p className="text-sm hidden md:text-base md:block">
-                Share My Plants
-              </p>
             </button>
           )}
         </div>
@@ -219,7 +244,10 @@ const MyPlants = () => {
                       alt="leaf icon -  healthy"
                     />
                   )}
-                  <button className="my-2 font-mono border-solid border-[1px] border-white rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2  text-white md:px-4 lg:px-4 active:bg-sky-200/20">
+                  <button
+                    onClick={(e) => handleWateringClick(aPlant.id, e)}
+                    className="my-2 font-mono border-solid border-[1px] border-white rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2  text-white md:px-4 lg:px-4 active:bg-sky-200/20"
+                  >
                     Water Plant
                   </button>
                 </div>
