@@ -94,6 +94,10 @@ const Plant = () => {
     }
   };
 
+  const handleLogFertilizinfClick = () => {
+    router.push(`/my-plants/${plantId}/fertilising`);
+  };
+
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen flex justify-center items-start font-mono">
       <NavBar />
@@ -340,7 +344,7 @@ const Plant = () => {
             <p className="ml-2 inline text-sm md:text-base">Water Plant</p>
           </button>
           <button
-            onClick={() => handleWateringClick()}
+            onClick={handleLogFertilizinfClick}
             className="m-4 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
           >
             <img

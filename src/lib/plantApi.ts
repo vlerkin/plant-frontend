@@ -36,7 +36,7 @@ export const updatePlantInfo = (
   return apiClient.patch(`/my-plants/${plantId}`, params);
 };
 
-export type CreateNewPlantParams = {
+type CreateNewPlantParams = {
   name: string;
   photo: string;
   howOftenWatering: number;
@@ -53,4 +53,16 @@ export const createNewPlant = (params: CreateNewPlantParams) => {
 
 export const deleteSpecificPlant = (plantId: number) => {
   return apiClient.delete(`/my-plants/${plantId}`);
+};
+
+type LogNewFertiliserParams = {
+  type: string;
+  quantity: number;
+};
+
+export const logNewFertilising = (
+  params: LogNewFertiliserParams,
+  plantId: number
+) => {
+  return apiClient.post(`/my-plants/${plantId}/fertilizing`, params);
 };

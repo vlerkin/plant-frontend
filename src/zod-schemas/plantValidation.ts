@@ -91,3 +91,10 @@ export const checkMyPlants = z.object({
 
 export type MyPlant = z.infer<typeof checkMyPlants>;
 export const arrayMyPlantsDataApi = z.array(checkMyPlants);
+
+export const checkFertiliserForm = z.object({
+  type: z.string().max(300),
+  quantity: z.number().gte(0),
+});
+
+export type DataFromFertiliserForm = z.infer<typeof checkFertiliserForm>;
