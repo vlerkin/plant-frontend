@@ -331,60 +331,60 @@ const Plant = () => {
         <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2">
           Available actions
         </p>
-        <div className="flex justify-around flex-col mb-6">
+        <div className="grid grid-cols-6 gap-2 mb-6 mt-2">
           <button
             onClick={() => handleWateringClick()}
-            className="m-4 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="col-span-6 mx-4 mt-2 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 lg:col-span-2"
           >
             <img
               src="/watercan.svg"
               alt="icon of watering can"
               className="inline w-8 h-8 md:hidden lg:hidden"
             ></img>
-            <p className="ml-2 inline text-sm md:text-base">Water Plant</p>
+            <p className="ml-2 inline text-sm">Water Plant</p>
           </button>
           <button
             onClick={handleLogFertilizinfClick}
-            className="m-4 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="col-span-6 mx-4 mt-2 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 lg:col-span-2"
           >
             <img
               src="/fertiliser.svg"
               alt="icon of fertiliser"
               className="inline w-8 h-8 md:hidden lg:hidden"
             ></img>
-            <p className="ml-2 inline text-sm md:text-base">Log Fertilizing</p>
+            <p className="ml-2 inline text-sm">Add Fertiliser</p>
           </button>
           <button
             onClick={() => handleWateringClick()}
-            className="m-4 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="col-span-6 mx-4 mt-2 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 lg:col-span-2"
           >
             <img
               src="/medication.svg"
               alt="icon of medications"
               className="inline w-8 h-8 md:hidden lg:hidden"
             ></img>
-            <p className="ml-2 inline text-sm md:text-base">Log Disease</p>
+            <p className="ml-2 inline text-sm">Log Disease</p>
           </button>
           <button
             onClick={() => router.push(`/my-plants/${plantId}/edit`)}
-            className="m-4 font-mono border-solid border-[1px] border-yellow-300 rounded-md p-2 bg-yellow-100/20 hover:bg-yellow-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4"
+            className="col-span-6 mx-4 mt-2 font-mono border-solid border-[1px] border-yellow-300 rounded-md p-2 bg-yellow-100/20 hover:bg-yellow-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4 lg:col-span-3"
           >
             <img
               src="/edit.svg"
               alt="icon of paper and pen"
               className="inline w-8 h-8 md:hidden lg:hidden"
             ></img>
-            <p className="ml-2 inline text-sm md:text-base">Edit Plant</p>
+            <p className="ml-2 inline text-sm">Edit Plant</p>
           </button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="m-4 font-mono border-solid border-[1px] border-red-600 rounded-md p-2 bg-red-100/20 hover:bg-red-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4">
+              <button className="col-span-6 mx-4 mt-2 font-mono border-solid border-[1px] border-red-600 rounded-md p-2 bg-red-100/20 hover:bg-red-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4 lg:col-span-3">
                 <img
                   src="/delete.svg"
                   alt="icon of garbage bin"
                   className="inline w-8 h-8 md:hidden lg:hidden"
                 ></img>
-                <p className="ml-2 inline text-sm md:text-base">Delete Plant</p>
+                <p className="ml-2 inline text-sm">Delete Plant</p>
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
