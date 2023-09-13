@@ -38,7 +38,7 @@ const Plant = () => {
     }
 
     const token = getToken();
-    if (token === null) {
+    if (token === undefined || null) {
       router.push("/login");
       return;
     }
@@ -316,7 +316,7 @@ const Plant = () => {
                     );
                   })
                 ) : (
-                  <p className="ml-2">
+                  <p className="ml-[12px]">
                     You have not added any plant's health problems yet
                   </p>
                 )}
@@ -327,64 +327,60 @@ const Plant = () => {
         <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2">
           Available actions
         </p>
-        <div className="flex justify-around flex-wrap">
+        <div className="flex justify-around flex-col mb-6">
           <button
             onClick={() => handleWateringClick()}
-            className="my-4 mx-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="m-4 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
           >
             <img
               src="/watercan.svg"
               alt="icon of watering can"
-              className="inline w-12 h-12 md:hidden lg:hidden"
+              className="inline w-8 h-8 md:hidden lg:hidden"
             ></img>
-            <p className="text-sm hidden md:text-base md:block">Water Plant</p>
+            <p className="ml-2 inline text-sm md:text-base">Water Plant</p>
           </button>
           <button
             onClick={() => handleWateringClick()}
-            className="my-4 mx-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="m-4 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
           >
             <img
               src="/fertiliser.svg"
               alt="icon of fertiliser"
-              className="inline w-12 h-12 md:hidden lg:hidden"
+              className="inline w-8 h-8 md:hidden lg:hidden"
             ></img>
-            <p className="text-sm hidden md:text-base md:block">
-              Log Fertilizing
-            </p>
+            <p className="ml-2 inline text-sm md:text-base">Log Fertilizing</p>
           </button>
           <button
             onClick={() => handleWateringClick()}
-            className="my-4 mx-2 font-mono border-solid border-[1px] border-black rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
+            className="m-4 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4"
           >
             <img
               src="/medication.svg"
               alt="icon of medications"
-              className="inline w-12 h-12 md:hidden lg:hidden"
+              className="inline w-8 h-8 md:hidden lg:hidden"
             ></img>
-            <p className="text-sm hidden md:text-base md:block">Log Disease</p>
+            <p className="ml-2 inline text-sm md:text-base">Log Disease</p>
           </button>
           <button
             onClick={() => router.push(`/my-plants/${plantId}/edit`)}
-            className="my-4 mx-2 font-mono border-solid border-[1px] border-yellow-300 rounded-md py-2 px-4 bg-yellow-100/20 hover:bg-yellow-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4"
+            className="m-4 font-mono border-solid border-[1px] border-yellow-300 rounded-md p-2 bg-yellow-100/20 hover:bg-yellow-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4"
           >
             <img
               src="/edit.svg"
               alt="icon of paper and pen"
-              className="inline w-12 h-12 md:hidden lg:hidden"
+              className="inline w-8 h-8 md:hidden lg:hidden"
             ></img>
-            <p className="text-sm hidden md:text-base md:block">Edit Plant</p>
+            <p className="ml-2 inline text-sm md:text-base">Edit Plant</p>
           </button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="my-4 mx-2 font-mono border-solid border-[1px] border-red-600 rounded-md py-2 px-4 bg-red-100/20 hover:bg-red-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4">
+              <button className="m-4 font-mono border-solid border-[1px] border-red-600 rounded-md p-2 bg-red-100/20 hover:bg-red-400 md:py-2 lg:py-2  md:text-white  lg:text-white md:px-4 lg:px-4">
                 <img
                   src="/delete.svg"
                   alt="icon of garbage bin"
-                  className="inline w-12 h-12 md:hidden lg:hidden"
+                  className="inline w-8 h-8 md:hidden lg:hidden"
                 ></img>
-                <p className="text-sm hidden md:text-base md:block">
-                  Delete Plant
-                </p>
+                <p className="ml-2 inline text-sm md:text-base">Delete Plant</p>
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
