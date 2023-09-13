@@ -15,6 +15,7 @@ const MyPlants = () => {
   const [filterState, setFilterState] = useState<boolean>(false);
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
   useEffect(() => {
     const tokenFromLC = getToken();
     if (tokenFromLC === undefined || null) {
@@ -57,6 +58,7 @@ const MyPlants = () => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.stopPropagation();
+
     try {
       await waterPlant(plantId);
 
@@ -75,6 +77,12 @@ const MyPlants = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+  const handleWaterButtonHover = () => {
+    setIsTransitionEnabled(false);
+  };
+  const handleWaterButtonLeave = () => {
+    setIsTransitionEnabled(true);
   };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen">
@@ -141,7 +149,9 @@ const MyPlants = () => {
               <div
                 key={aPlant.id}
                 onClick={() => handleClickPlant(aPlant.id)}
-                className="col-span-6 md:col-span-3 lg:col-span-2 flex min-h-[60%] text-sm backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative active:translate-y-2 hover:-translate-y-2 hover:cursor-pointer hover:shadow-2xl md:text-base lg:text-base"
+                className={`col-span-6 md:col-span-3 lg:col-span-2 flex min-h-[60%] text-sm backdrop-blur-md bg-gray-900/10 rounded-md text-white shadow-lg relative hover:cursor-pointer hover:shadow-2xl md:text-base lg:text-base ${
+                  isTransitionEnabled && "active:translate-y-2"
+                } ${isTransitionEnabled && "hover:-translate-y-2"}`}
               >
                 {aPlant.photo_url ? (
                   <div
@@ -203,6 +213,8 @@ const MyPlants = () => {
                   )}
                   <button
                     onClick={(e) => handleWateringClick(aPlant.id, e)}
+                    onMouseEnter={handleWaterButtonHover}
+                    onMouseLeave={handleWaterButtonLeave}
                     className="my-2 font-mono border-solid border-[1px] border-white rounded-md py-2 px-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2  text-white md:px-4 lg:px-4 active:bg-sky-200/20"
                   >
                     Water Plant
