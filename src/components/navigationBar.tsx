@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Sprout, User } from "lucide-react";
+import { deleteToken, getToken } from "@/lib/tokenApi";
 
 interface NavigationItem {
   text: string;
@@ -30,16 +31,16 @@ const NavigationSection = (props: NavigationItem) => {
 };
 
 const NavBar = () => {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | undefined>(undefined);
   useEffect(() => {
-    const tokenFromLocalStorage = localStorage.getItem("token");
+    const tokenFromLocalStorage = getToken();
     setToken(tokenFromLocalStorage);
   }, []);
   const router = useRouter();
 
   const handleClickLogOut = () => {
-    localStorage.removeItem("token");
-    setToken(null);
+    deleteToken();
+    setToken(undefined);
     router.push("/");
   };
 

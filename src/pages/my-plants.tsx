@@ -116,7 +116,7 @@ const MyPlants = () => {
           {!authUserState.is_guest && (
             <button
               onClick={() => router.push("/add-plant")}
-              className="flex items-center m-2 font-mono border-solid border-[1px] border-black rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
+              className="flex items-center m-2 font-mono border-solid border-[1px] border-black rounded-md px-2 py-4 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 active:bg-sky-200/20"
             >
               <img
                 src="/plus.svg"
