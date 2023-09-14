@@ -34,3 +34,11 @@ export const checkLoginFormData = z.object({
 });
 
 export type DataFromLoginForm = z.infer<typeof checkLoginFormData>;
+
+export const checkEditProfileData = z.object({
+  name: z.string().max(100),
+  email: z.string().email(),
+  password: z.string().nullable(),
+});
+
+export type DataFromEditProfileForm = z.infer<typeof checkEditProfileData>;

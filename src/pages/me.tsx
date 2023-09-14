@@ -54,7 +54,7 @@ import {
   deleteAccessToken,
   getAccessTokens,
   getUser,
-  updateUser,
+  updateUserPhoto,
   uploadUserPhoto,
 } from "@/lib/userApi";
 import {
@@ -68,6 +68,7 @@ import {
   checkPhotoUploadFormData,
 } from "@/zod-schemas/photoValidation";
 import { getToken } from "@/lib/tokenApi";
+import ProfileForm from "@/components/editProfileForm";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -179,7 +180,7 @@ const Profile = () => {
     try {
       const res = await uploadUserPhoto(data.photo[0]);
       const photoName = res.data.filename;
-      await updateUser({
+      await updateUserPhoto({
         name: null,
         photo: photoName,
         email: null,
@@ -327,12 +328,18 @@ const Profile = () => {
               <p className="break-all">{userInfo.email}</p>
             </div>
           </div>
+          <Hidden hide={"Hide Form"} show={"Edit my profile"}>
+            <ProfileForm
+              authUserState={authUserState}
+              setUserInfo={setUserInfo}
+            />
+          </Hidden>
           <Hidden hide={"Hide info"} show={"Show access tokens"}>
             {accessTokens.map((aToken) => {
               return (
                 <div
                   key={aToken.id}
-                  className="flex justify-between items-center py-2 border-b-[1px] border-dashed border-white mt-2"
+                  className="flex justify-between font-mono items-center py-2 border-b-[1px] border-dashed border-white mt-2"
                 >
                   <img
                     src="/key.png"
@@ -408,11 +415,11 @@ const Profile = () => {
           </Hidden>
           <Hidden hide={"Hide Form"} show={"Create permission for access"}>
             <form
-              className="border-white border-dashed border-[1px] rounded-md p-4 mb-4"
+              className="border-white border-dashed border-[1px] font-mono rounded-md p-4 mb-4"
               onSubmit={handleFormSubmit}
             >
-              <div className="flex flex-col items-center justify-center">
-                <label className="block mb-2">
+              <div className="flex flex-col justify-center">
+                <label className="block mb-2 ml-[2px]">
                   What is the name of a caretaker?
                 </label>
                 <Input
@@ -420,12 +427,12 @@ const Profile = () => {
                   placeholder="Name"
                   value={caretakerName}
                   onChange={handleNameOnChange}
-                  className="max-w-full md:max-w-96 lg:max-w-96 text-black"
+                  className="max-w-full md:max-w-96 lg:max-w-96 text-black mb-2"
                 ></Input>
               </div>
 
-              <div className="flex flex-col items-center justify-center text-black">
-                <label className="block mb-2 mt-2 text-white">
+              <div className="flex flex-col justify-center text-black">
+                <label className="block mb-2 mt-2 text-white ml-[2px]">
                   Until what date you want this person to have access?
                 </label>
                 <Popover>
@@ -456,7 +463,7 @@ const Profile = () => {
                 </Popover>
                 <button
                   type="submit"
-                  className=" text-white mt-4 border-[1px] border-white border-solid rounded-md bg-sky-100/20 p-2 hover:bg-[#81A684] active:bg-sky-200/20"
+                  className=" text-white mt-6 border-[1px] border-white border-solid rounded-md bg-sky-100/20 p-2 hover:bg-[#81A684] active:bg-sky-200/20"
                 >
                   Create Permission
                 </button>

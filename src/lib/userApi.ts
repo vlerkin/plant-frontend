@@ -56,17 +56,27 @@ export const uploadUserPhoto = (photo: any) => {
   );
 };
 
-type updateUserParams = {
+type updateUserPhotoParams = {
   name: null;
   photo: string;
   email: null;
   password: null;
 };
 
-export const updateUser = (params: updateUserParams) => {
+export const updateUserPhoto = (params: updateUserPhotoParams) => {
   return apiClient.patch("/me", params);
 };
 
 export const authorizeGuestToken = (guestToken: string | string[]) => {
   return apiClient.get(`/access-tokens/authorize/${guestToken}`);
+};
+
+type UpdateProfileParams = {
+  name: string;
+  email: string;
+  password: string | null;
+};
+
+export const updateUserProfile = (params: UpdateProfileParams) => {
+  return apiClient.patch("/me", params);
 };
