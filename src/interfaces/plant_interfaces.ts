@@ -25,3 +25,17 @@ export interface UploadResults {
   filename: string;
   user_id: number;
 }
+
+enum Disease {
+  rottenRoot = "Rotten root",
+  fungalLeafSpots = "Fungal leaf spots",
+  bacterialLeafSpots = "Bacterial leaf spots",
+  blackSootyMold = "Black sooty mold",
+  powderyMildew = "Powdery mildew",
+  grayMold = "Gray mold/ Botrytis blight",
+  whiteMold = "White mold",
+  anthracnose = "Anthracnose",
+  viralDisease = "Viral disease",
+}
+
+export const DiseasEnum = z.nativeEnum(Disease);

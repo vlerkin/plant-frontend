@@ -12,7 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Settings, Share, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { cn, getAuthUser, numberToMonth } from "@/lib/utils";
+import { cn, dateFormat, getAuthUser, numberToMonth } from "@/lib/utils";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -67,6 +67,7 @@ import {
   DataFromPhotoUploadForm,
   checkPhotoUploadFormData,
 } from "@/zod-schemas/photoValidation";
+import { getToken } from "@/lib/tokenApi";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -78,7 +79,7 @@ const Profile = () => {
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (token === null) {
       router.push("/login");
       return;
@@ -342,15 +343,7 @@ const Profile = () => {
                     {aToken.nameToken}{" "}
                   </span>
                   <span className="break-all text-sm italic">
-                    Valid until{" "}
-                    {
-                      numberToMonth[
-                        aToken.endDate
-                          .split("T")[0]
-                          .split("-")[1] as keyof typeof numberToMonth
-                      ]
-                    }{" "}
-                    {aToken.endDate.split("T")[0].split("-")[2]}
+                    Valid until {dateFormat(aToken.endDate)}{" "}
                   </span>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -424,6 +417,7 @@ const Profile = () => {
                 </label>
                 <Input
                   type="text"
+                  placeholder="Name"
                   value={caretakerName}
                   onChange={handleNameOnChange}
                   className="max-w-full md:max-w-96 lg:max-w-96 text-black"

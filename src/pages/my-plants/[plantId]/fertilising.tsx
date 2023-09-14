@@ -2,18 +2,44 @@ import ErrorMessage from "@/components/error";
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AuthUser } from "@/interfaces/user_interfaces";
 import { logNewFertilising } from "@/lib/plantApi";
+import { getToken } from "@/lib/tokenApi";
+import { getAuthUser } from "@/lib/utils";
 import {
   DataFromFertiliserForm,
   checkFertiliserForm,
 } from "@/zod-schemas/plantValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const FertilizePlant = () => {
   const router = useRouter();
   const plantId = Number(router.query.plantId);
+  const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
+  const [isUserLoading, setUserLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const tokenFromLC = getToken();
+    if (tokenFromLC === undefined || null) {
+      router.push("/login");
+      return;
+    }
+    // check if token not expired and wait until function returns the answer
+    const authenticateUser = async () => {
+      const authUser = await getAuthUser();
+      setAuthUser(authUser);
+      setUserLoading(false);
+    };
+    authenticateUser();
+  }, [plantId]);
+  if (isUserLoading) {
+    return <p>Loading...</p>;
+  } else if (!authUserState) {
+    router.push("/login");
+    return;
+  }
   if (plantId === undefined || isNaN(plantId)) {
     return;
   }
@@ -41,7 +67,6 @@ const FertilizePlant = () => {
       </div>
       <div className="flex justify-center items-center max-h-[60%]">
         <form
-          encType="multipart/form-data"
           className="-mt-10 mb-10 backdrop-blur-md bg-gray-900/10 p-6 rounded-md text-white w-4/5 md:-mt-20 lg:-mt-20 md:w-1/2 lg:1/3"
           onSubmit={handleSubmit(handleFormSubmit)}
         >

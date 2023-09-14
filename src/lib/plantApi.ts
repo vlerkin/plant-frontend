@@ -66,3 +66,32 @@ export const logNewFertilising = (
 ) => {
   return apiClient.post(`/my-plants/${plantId}/fertilizing`, params);
 };
+
+type UpdateEndDateParams = {
+  end_date: Date;
+  plant_disease_id: number;
+};
+
+export const updateDiseaseEndDate = (
+  params: UpdateEndDateParams,
+  plantId: number
+) => {
+  return apiClient.patch(`/my-plants/${plantId}/plant-disease`, params);
+};
+
+export const getDiseaseInfo = () => {
+  return apiClient.get("/all-diseases");
+};
+
+type CreateDiseaseLogParams = {
+  diseaseId: number;
+  startDate: Date;
+  treatment: string | null;
+};
+
+export const createDiseaseLog = (
+  params: CreateDiseaseLogParams,
+  plantId: number
+) => {
+  return apiClient.post(`/my-plants/${plantId}/plant-disease`, params);
+};

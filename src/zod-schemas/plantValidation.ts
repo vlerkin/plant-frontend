@@ -1,4 +1,8 @@
-import { LightEnum, LocationEnum } from "@/interfaces/plant_interfaces";
+import {
+  DiseasEnum,
+  LightEnum,
+  LocationEnum,
+} from "@/interfaces/plant_interfaces";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/lib/utils";
 import { z } from "zod";
 
@@ -98,3 +102,16 @@ export const checkFertiliserForm = z.object({
 });
 
 export type DataFromFertiliserForm = z.infer<typeof checkFertiliserForm>;
+
+export const checkPlantDiseaseForm = z.object({
+  diseaseType: DiseasEnum,
+  treatment: z.string().nullable(),
+});
+
+export type DataFromPlantDiseaseForm = z.infer<typeof checkPlantDiseaseForm>;
+
+export const checkDiseaseInfo = z.array(
+  z.object({ id: z.number().int().gte(0), type: DiseasEnum })
+);
+
+export type DiseaseInfo = z.infer<typeof checkDiseaseInfo>;

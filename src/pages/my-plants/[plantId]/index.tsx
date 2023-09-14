@@ -15,22 +15,45 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { AuthUser } from "@/interfaces/user_interfaces";
-import { getAuthUser, numberToMonth } from "@/lib/utils";
+import { cn, dateFormat, getAuthUser, numberToMonth } from "@/lib/utils";
 import { PlantInfo, checkPlantInfo } from "@/zod-schemas/plantValidation";
 import {
   deleteSpecificPlant,
   getSpecificPlant,
+  updateDiseaseEndDate,
   waterPlant,
 } from "@/lib/plantApi";
 import { getToken } from "@/lib/tokenApi";
+import { CalendarIcon, Pencil } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
 
 const Plant = () => {
   const [plantInfo, setPlantInfo] = useState<PlantInfo | null>(null);
-  const router = useRouter();
-  const plantId = Number(router.query.plantId);
+  const [date, setDate] = useState<Date>();
+  const [plantDiseaseLogId, setPlantDiseaseLogId] = useState<number>();
   const [authUserState, setAuthUser] = useState<AuthUser | null>(null);
   const [isUserLoading, setUserLoading] = useState<boolean>(true);
+  const [startDate, setStartDate] = useState<string>();
   const { toast } = useToast();
+  const router = useRouter();
+  const plantId = Number(router.query.plantId);
 
   useEffect(() => {
     if (plantId === undefined || isNaN(plantId)) {
@@ -98,6 +121,43 @@ const Plant = () => {
     router.push(`/my-plants/${plantId}/fertilising`);
   };
 
+  const handleEndDateSubmit = async () => {
+    if (
+      date !== undefined &&
+      plantDiseaseLogId !== undefined &&
+      startDate !== undefined &&
+      Date.parse(date.toDateString()) > Date.parse(startDate)
+    ) {
+      try {
+        await updateDiseaseEndDate(
+          {
+            end_date: date,
+            plant_disease_id: plantDiseaseLogId,
+          },
+          plantId
+        );
+        toast({
+          title: "Success!",
+          description: "End date updated",
+        });
+        const response = await getSpecificPlant(plantId);
+        const parsedResponse = checkPlantInfo.safeParse(response.data);
+        if (parsedResponse.success === true) {
+          setPlantInfo(parsedResponse.data);
+        } else {
+          console.log(parsedResponse.error.flatten());
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      toast({
+        title: "Sorry",
+        description:
+          "Something is wrong, please check your input and try again",
+      });
+    }
+  };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen flex justify-center items-start font-mono">
       <NavBar />
@@ -192,11 +252,11 @@ const Plant = () => {
             </p>
           </div>
         )}
-        <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2">
+        <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2 md:text-base lg:text-base">
           Last actions
         </p>
         <div className="md:flex lg:flex">
-          <div>
+          <div className="ml-0 md:min-w-[45%] lg:min-w-[45%] md:ml-2 lg:ml-2">
             <div className="text-sm m-4">
               <div
                 className="flex items-center"
@@ -210,19 +270,8 @@ const Plant = () => {
                   className="inline"
                 ></img>
                 {plantInfo.watering_log != null ? (
-                  <p className="ml-2">
-                    {
-                      numberToMonth[
-                        plantInfo.watering_log.dateTime
-                          .split("T")[0]
-                          .split("-")[1] as keyof typeof numberToMonth
-                      ]
-                    }{" "}
-                    {
-                      plantInfo.watering_log.dateTime
-                        .split("T")[0]
-                        .split("-")[2]
-                    }
+                  <p className="px-2">
+                    {dateFormat(plantInfo.watering_log.dateTime)}
                   </p>
                 ) : (
                   <p className="ml-2">You have not watered the plant yet</p>
@@ -244,20 +293,7 @@ const Plant = () => {
                       {plantInfo.fertilizing_log.quantity}g of{" "}
                       {plantInfo.fertilizing_log.type}
                     </p>
-                    <p>
-                      {
-                        numberToMonth[
-                          plantInfo.fertilizing_log.dateTime
-                            .split("T")[0]
-                            .split("-")[1] as keyof typeof numberToMonth
-                        ]
-                      }{" "}
-                      {
-                        plantInfo.fertilizing_log.dateTime
-                          .split("T")[0]
-                          .split("-")[2]
-                      }
-                    </p>
+                    <p>{dateFormat(plantInfo.fertilizing_log.dateTime)}</p>
                   </div>
                 ) : (
                   <p className="ml-2">You have not fertilised the plant yet</p>
@@ -279,43 +315,111 @@ const Plant = () => {
                 plantInfo.disease_log.length > 0 ? (
                   plantInfo.disease_log.map((diseaseLog) => {
                     return (
-                      <div className="ml-2 mb-2">
-                        <p className="font-semibold">
-                          {diseaseLog?.disease_type}
-                        </p>
-                        <p className="inline">
-                          <span>
-                            {
-                              numberToMonth[
-                                diseaseLog?.startDate
-                                  .split("T")[0]
-                                  .split("-")[1] as keyof typeof numberToMonth
-                              ]
-                            }
-                          </span>{" "}
-                          <span>
-                            {diseaseLog?.startDate.split("T")[0].split("-")[2]}
-                          </span>{" "}
-                          -{" "}
-                        </p>
-                        {diseaseLog?.endDate ? (
-                          <p className="inline">
-                            <span>
-                              {
-                                numberToMonth[
-                                  diseaseLog?.endDate
-                                    .split("T")[0]
-                                    .split("-")[1] as keyof typeof numberToMonth
-                                ]
-                              }
-                            </span>{" "}
-                            <span>
-                              {diseaseLog?.endDate.split("T")[0].split("-")[2]}
-                            </span>
+                      <div className="ml-2 mb-2 flex justify-between relative min-w-[45%] md:mr-4">
+                        <div>
+                          <p className="font-semibold">
+                            {diseaseLog?.disease_type}
                           </p>
-                        ) : (
-                          <p className="inline">now</p>
-                        )}
+                          <p className="inline">
+                            {dateFormat(diseaseLog?.startDate as string)} -
+                          </p>
+                          {diseaseLog?.endDate ? (
+                            <p className="inline">
+                              {" "}
+                              {dateFormat(diseaseLog?.endDate)}
+                            </p>
+                          ) : (
+                            <div className="inline">
+                              <p className="inline"> now</p>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <button>
+                                    <Pencil className="inline ml-4 h-[20px] w-[20px] absolute top-2 -right-6" />
+                                  </button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[300px]">
+                                  <DialogHeader>
+                                    <DialogTitle>
+                                      Log Disease End Date
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                      If disease is over, log an end date here.
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  {date !== undefined &&
+                                    diseaseLog?.startDate !== undefined &&
+                                    Date.parse(date.toDateString()) <=
+                                      Date.parse(diseaseLog?.startDate) && (
+                                      <p className="text-sm text-red-600 text-center font-bold -mt-2 p-2 rounded-md border-[1px] border-dashed border-red-600">
+                                        End date cannot be earlier than start
+                                        date, please don't mess with the
+                                        spacetime of the universe
+                                      </p>
+                                    )}
+                                  <div className="grid gap-4 py-4">
+                                    <div className="flex items-center justify-center gap-4">
+                                      <form
+                                        encType="multipart/form-data"
+                                        onSubmit={handleEndDateSubmit}
+                                      >
+                                        <Label
+                                          htmlFor="photo"
+                                          className="ml-[1px]"
+                                        >
+                                          Pick end date
+                                        </Label>
+                                        <Popover>
+                                          <PopoverTrigger asChild>
+                                            <Button
+                                              variant={"outline"}
+                                              className={cn(
+                                                "justify-start text-left font-normal min-w-full md:max-w-96 lg:max-w-96",
+                                                !date && "text-muted-foreground"
+                                              )}
+                                            >
+                                              <CalendarIcon className="mr-2 h-4 w-4 " />
+                                              {date ? (
+                                                format(date, "PPP")
+                                              ) : (
+                                                <span className="">
+                                                  Pick a date
+                                                </span>
+                                              )}
+                                            </Button>
+                                          </PopoverTrigger>
+                                          <PopoverContent className="w-auto p-0">
+                                            <Calendar
+                                              mode="single"
+                                              selected={date}
+                                              onSelect={setDate}
+                                              initialFocus
+                                            />
+                                          </PopoverContent>
+                                        </Popover>
+                                        <DialogFooter>
+                                          <Button
+                                            className="mt-4"
+                                            type="submit"
+                                            onClick={() => {
+                                              setPlantDiseaseLogId(
+                                                diseaseLog?.id
+                                              );
+                                              setStartDate(
+                                                diseaseLog?.startDate
+                                              );
+                                            }}
+                                          >
+                                            Log End Date
+                                          </Button>
+                                        </DialogFooter>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     );
                   })
@@ -328,7 +432,7 @@ const Plant = () => {
             </div>
           </div>
         </div>
-        <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2">
+        <p className="text-sm text-center border-solid border-b-[1px] border-white mx-4 pb-2 md:text-base lg:text-base">
           Available actions
         </p>
         <div className="grid grid-cols-6 gap-2 mb-6 mt-2">
@@ -355,7 +459,7 @@ const Plant = () => {
             <p className="ml-2 inline text-sm">Add Fertiliser</p>
           </button>
           <button
-            onClick={() => handleWateringClick()}
+            onClick={() => router.push(`/my-plants/${plantId}/disease`)}
             className="col-span-6 mx-4 mt-2 font-mono border-solid border-[1px] border-white rounded-md p-2 bg-sky-100/20 hover:bg-[#81A684] md:py-2 lg:py-2 md:border-white md:text-white lg:border-white lg:text-white md:px-4 lg:px-4 lg:col-span-2"
           >
             <img

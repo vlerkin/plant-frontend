@@ -23,20 +23,25 @@ export async function getAuthUser() {
   }
 }
 
-export const numberToMonth = {
-  "01": "Jan",
-  "02": "Feb",
-  "03": "Mar",
-  "04": "Apr",
-  "05": "May",
-  "06": "Jun",
-  "07": "Jul",
-  "08": "Aug",
-  "09": "Sep",
-  "10": "Oct",
-  "11": "Nov",
-  "12": "Dec",
-};
+export const numberToMonth = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+export function dateFormat(date_string: string) {
+  const date = new Date(date_string + "Z");
+  return numberToMonth[date.getMonth()] + " " + date.getDate();
+}
 
 export const MAX_FILE_SIZE = 10000000;
 export const ACCEPTED_IMAGE_TYPES = [
