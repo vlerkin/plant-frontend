@@ -320,7 +320,10 @@ const Plant = () => {
                 plantInfo.disease_log.length > 0 ? (
                   plantInfo.disease_log.map((diseaseLog) => {
                     return (
-                      <div className="ml-2 mb-2 flex justify-between relative min-w-[45%] md:mr-4">
+                      <div
+                        key={diseaseLog?.id}
+                        className="ml-2 mb-2 flex justify-between relative min-w-[45%] md:mr-4"
+                      >
                         <div className="ml-2">
                           <p className="font-semibold">
                             {diseaseLog?.disease_type}
