@@ -34,6 +34,13 @@ const FertilizePlant = () => {
     };
     authenticateUser();
   }, [plantId]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<DataFromFertiliserForm>({
+    resolver: zodResolver(checkFertiliserForm),
+  });
   if (isUserLoading) {
     return <p>Loading...</p>;
   } else if (!authUserState) {
@@ -43,19 +50,13 @@ const FertilizePlant = () => {
   if (plantId === undefined || isNaN(plantId)) {
     return;
   }
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<DataFromFertiliserForm>({
-    resolver: zodResolver(checkFertiliserForm),
-  });
+
   const handleFormSubmit = async (data: DataFromFertiliserForm) => {
     await logNewFertilising(
       { type: data.type, quantity: data.quantity },
       plantId
     );
-    router.push("/my-plants");
+    router.push(`/my-plants/${plantId}`);
   };
   return (
     <main className="bg-[#57886C] min-h-screen">
