@@ -69,6 +69,7 @@ import {
 } from "@/zod-schemas/photoValidation";
 import { getToken } from "@/lib/tokenApi";
 import ProfileForm from "@/components/editProfileForm";
+import BaseLayout from "@/components/baseLayout";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -195,14 +196,7 @@ const Profile = () => {
     router.push(`/guest-access/${token}/share`);
   };
   return (
-    <main className="bg-[#57886C] bg-repeat-y min-h-screen">
-      <div className="bg-[url('/plant.jpg')] h-44 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
-        <NavBar />
-        <Toaster />
-        <h1 className="font-mono mt-4 font-bold text-xl drop-shadow-2xl text-white md:-mb-4 lg:-md-4 md:text-4xl lg:text-4xl">
-          My Profile
-        </h1>
-      </div>
+    <BaseLayout header="My Profile">
       <div className="flex justify-center">
         <div className="flex flex-col items-center -mt-10 mb-10 backdrop-blur-md max-h-[60%] bg-gray-900/10 p-6 rounded-md text-white text-sm w-4/5 md:-mt-20 lg:-mt-20 md:w-2/5 lg:2/5 md:text-base lg:text-base">
           <div className="flex flex-col items-center lg:flex-row justify-around w-full">
@@ -475,7 +469,7 @@ const Profile = () => {
           </Hidden>
         </div>
       </div>
-    </main>
+    </BaseLayout>
   );
 };
 export default Profile;

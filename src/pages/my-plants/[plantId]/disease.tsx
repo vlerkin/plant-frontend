@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import { getToken } from "@/lib/tokenApi";
 import { AuthUser } from "@/interfaces/user_interfaces";
 import { createDiseaseLog, getDiseaseInfo } from "@/lib/plantApi";
+import BaseLayout from "@/components/baseLayout";
 
 const LogPlantDisease = () => {
   const [date, setDate] = useState<Date>();
@@ -104,13 +105,7 @@ const LogPlantDisease = () => {
     }
   };
   return (
-    <main className="bg-[#57886C] bg-repeat-y min-h-screen">
-      <div className="bg-[url('/plant.jpg')] h-44 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
-        <NavBar />
-        <h1 className="font-mono mt-4 font-bold text-xl drop-shadow-2xl text-white md:-mt-8 lg:-mt-8 md:text-4xl lg:text-4xl">
-          Log Plant Disease
-        </h1>
-      </div>
+    <BaseLayout header="Log Plant Disease">
       <div className="flex justify-center items-center max-h-[60%]">
         <form
           encType="multipart/form-data"
@@ -204,7 +199,7 @@ const LogPlantDisease = () => {
           </div>
         </form>
       </div>
-    </main>
+    </BaseLayout>
   );
 };
 

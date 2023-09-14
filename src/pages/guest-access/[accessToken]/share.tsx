@@ -3,6 +3,7 @@ import { useQRCode } from "next-qrcode";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Share from "@/components/share";
+import BaseLayout from "@/components/baseLayout";
 
 const ShareAccess = () => {
   const router = useRouter();
@@ -21,13 +22,7 @@ const ShareAccess = () => {
     url: process.env.NEXT_PUBLIC_SELF_URL + `/guest-access/${guestToken}`,
   };
   return (
-    <main className="bg-[#57886C] min-h-screen">
-      <div className="bg-[url('/plant.jpg')] h-44 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
-        <NavBar />
-        <h1 className="font-mono mt-4 font-bold text-xl drop-shadow-2xl text-white md:-mt-8 lg:-mt-8 md:text-4xl lg:text-4xl">
-          Share Access
-        </h1>
-      </div>
+    <BaseLayout header="Share Access">
       <div className="w-full flex justify-center text-white">
         <div className="-mt-10 flex backdrop-blur-md bg-gray-900/10 p-10 rounded-md items-center flex-col md:-mt-20 lg:-mt-20">
           <div>
@@ -52,7 +47,7 @@ const ShareAccess = () => {
           </div>
         </div>
       </div>
-    </main>
+    </BaseLayout>
   );
 };
 export default ShareAccess;

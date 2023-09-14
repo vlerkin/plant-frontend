@@ -1,3 +1,4 @@
+import BaseLayout from "@/components/baseLayout";
 import ErrorMessage from "@/components/error";
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
@@ -109,13 +110,7 @@ const EditPlant = () => {
     }
   };
   return (
-    <main className="bg-[#57886C] min-h-screen">
-      <div className="bg-[url('/plant.jpg')] h-44 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
-        <NavBar />
-        <h1 className="font-mono mt-4 font-bold text-xl drop-shadow-2xl text-white md:-mt-8 lg:-mt-8 md:text-4xl lg:text-4xl">
-          Edit Plant Info
-        </h1>
-      </div>
+    <BaseLayout header="Edit Plant Info">
       <div className="flex justify-center max-h-[60%]">
         <form
           encType="multipart/form-data"
@@ -304,7 +299,7 @@ const EditPlant = () => {
           </div>
         </form>
       </div>
-    </main>
+    </BaseLayout>
   );
 };
 export default EditPlant;
