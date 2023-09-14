@@ -274,7 +274,7 @@ const Plant = () => {
                     {dateFormat(plantInfo.watering_log.dateTime)}
                   </p>
                 ) : (
-                  <p className="ml-2">You have not watered the plant yet</p>
+                  <p className="ml-4">You have not watered the plant yet</p>
                 )}
               </div>
             </div>
@@ -289,14 +289,18 @@ const Plant = () => {
                 ></img>
                 {plantInfo.fertilizing_log != null ? (
                   <div className="ml-2">
-                    <p>
+                    <p className="ml-[4px]">
                       {plantInfo.fertilizing_log.quantity}g of{" "}
                       {plantInfo.fertilizing_log.type}
                     </p>
-                    <p>{dateFormat(plantInfo.fertilizing_log.dateTime)}</p>
+                    <p className="ml-[4px]">
+                      {dateFormat(plantInfo.fertilizing_log.dateTime)}
+                    </p>
                   </div>
                 ) : (
-                  <p className="ml-2">You have not fertilised the plant yet</p>
+                  <p className="ml-[11px]">
+                    You have not fertilised the plant yet
+                  </p>
                 )}
               </div>
             </div>
@@ -316,7 +320,7 @@ const Plant = () => {
                   plantInfo.disease_log.map((diseaseLog) => {
                     return (
                       <div className="ml-2 mb-2 flex justify-between relative min-w-[45%] md:mr-4">
-                        <div>
+                        <div className="ml-2">
                           <p className="font-semibold">
                             {diseaseLog?.disease_type}
                           </p>
@@ -424,7 +428,7 @@ const Plant = () => {
                     );
                   })
                 ) : (
-                  <p className="ml-[12px]">
+                  <p className="ml-4">
                     You have not added any plant's health problems yet
                   </p>
                 )}

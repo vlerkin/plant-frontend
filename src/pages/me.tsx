@@ -196,10 +196,10 @@ const Profile = () => {
   };
   return (
     <main className="bg-[#57886C] bg-repeat-y min-h-screen">
-      <div className="bg-[url('/plant.jpg')] h-32 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
+      <div className="bg-[url('/plant.jpg')] h-44 bg-center bg-no-repeat bg-cover md:h-80 lg:h-80 flex shrink-0 items-center justify-center rounded-br-2xl rounded-bl-2xl">
         <NavBar />
         <Toaster />
-        <h1 className="font-mono -mb- font-bold text-xl drop-shadow-2xl text-white md:-mb-4 lg:-md-4 md:text-4xl lg:text-4xl">
+        <h1 className="font-mono mt-4 font-bold text-xl drop-shadow-2xl text-white md:-mb-4 lg:-md-4 md:text-4xl lg:text-4xl">
           My Profile
         </h1>
       </div>
@@ -346,11 +346,14 @@ const Profile = () => {
                     alt="icon of a key"
                     className="inline h-6 w-6"
                   />
-                  <span className="break-all font-semibold text-sm md:text-base">
+                  <span className="ml-2 break-all font-semibold text-sm md:text-base">
                     {aToken.nameToken}{" "}
                   </span>
                   <span className="break-all text-sm italic">
-                    Valid until {dateFormat(aToken.endDate)}{" "}
+                    Valid until{" "}
+                    <span className="block md:inline lg:inline">
+                      {dateFormat(aToken.endDate)}{" "}
+                    </span>
                   </span>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

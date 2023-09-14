@@ -75,6 +75,7 @@ type UpdateProfileParams = {
   name: string;
   email: string;
   password: string | null;
+  photo: null;
 };
 
 export const updateUserProfile = (params: UpdateProfileParams) => {
