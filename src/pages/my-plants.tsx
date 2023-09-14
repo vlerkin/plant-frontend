@@ -1,3 +1,4 @@
+import LoadingAnimation from "@/components/loadingAnimation";
 import NavBar from "@/components/navigationBar";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/components/ui/use-toast";
@@ -42,10 +43,10 @@ const MyPlants = () => {
     getPlantsFromApi();
   }, []);
   if (!myPlants) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   }
   if (isUserLoading) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   } else if (!authUserState) {
     router.push("/login");
     return;

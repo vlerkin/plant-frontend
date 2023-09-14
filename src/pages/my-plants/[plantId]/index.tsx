@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
+import LoadingAnimation from "@/components/loadingAnimation";
 
 const Plant = () => {
   const [plantInfo, setPlantInfo] = useState<PlantInfo | null>(null);
@@ -86,11 +87,11 @@ const Plant = () => {
   }, [plantId]);
 
   if (!plantInfo) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   }
 
   if (isUserLoading) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   } else if (!authUserState) {
     router.push("/login");
     return;

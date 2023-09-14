@@ -1,5 +1,6 @@
 import BaseLayout from "@/components/baseLayout";
 import ErrorMessage from "@/components/error";
+import LoadingAnimation from "@/components/loadingAnimation";
 import NavBar from "@/components/navigationBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,11 +69,11 @@ const EditPlant = () => {
   });
 
   if (!plantInfo) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   }
 
   if (isUserLoading) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   } else if (!authUserState) {
     router.push("/login");
     return;

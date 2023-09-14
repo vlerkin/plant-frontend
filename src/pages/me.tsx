@@ -70,6 +70,7 @@ import {
 import { getToken } from "@/lib/tokenApi";
 import ProfileForm from "@/components/editProfileForm";
 import BaseLayout from "@/components/baseLayout";
+import LoadingAnimation from "@/components/loadingAnimation";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -121,13 +122,13 @@ const Profile = () => {
     resolver: zodResolver(checkPhotoUploadFormData),
   });
   if (!userInfo) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   }
   if (!accessTokens) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   }
   if (isUserLoading) {
-    return <p>Loading...</p>;
+    return <LoadingAnimation />;
   } else if (!authUserState) {
     router.push("/login");
     return;
