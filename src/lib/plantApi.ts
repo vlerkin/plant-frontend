@@ -13,9 +13,17 @@ export const waterPlant = (plantId: number) => {
 };
 
 export const uploadPlantPhoto = (photo: any) => {
-  return apiClient.post("/upload/plant", {
-    file: photo,
-  });
+  return apiClient.post(
+    "/upload/plant",
+    {
+      file: photo,
+    },
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
 };
 
 export type UpdatePlantInfoParams = {
