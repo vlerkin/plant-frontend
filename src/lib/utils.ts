@@ -1,6 +1,6 @@
-import axios from "axios";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { getUser } from "./userApi";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,9 +12,7 @@ export async function getAuthUser() {
     return null;
   } else {
     try {
-      const response = await axios.get("http://localhost:8000/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await getUser();
       return response.data;
     } catch (error) {
       console.log(error);
