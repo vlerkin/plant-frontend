@@ -37,7 +37,11 @@ export const numberToMonth = [
 ];
 
 export function dateFormat(date_string: string) {
-  const date = new Date(date_string + "Z");
+  const date = new Date(
+    date_string[date_string.length - 1] === "Z"
+      ? date_string
+      : date_string + "Z"
+  );
   return numberToMonth[date.getMonth()] + " " + date.getDate();
 }
 
