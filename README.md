@@ -9,7 +9,7 @@ The app has a responsive design with "mobile first" approach at it's core.
 Although during the bootcamp we mostly focused on JS technologies in all our projects, for this particular one I decided to challenge myself and take new technologies I have never worked before: FastAPI, SQLAlchemy, Pydantic, AWS S3, and Tailwind. It was a great challenge, to build an entire app from sctratch using several unfamiliar technologies within 2.5 weeks and now I am happy to present the result.
 For code delivery I used docker containers (also for development), the project is deployed on AWS EC2.
 
-To access the app, please, navigate here: https://plantie-care.klestova.nl/.\
+To access the app, please, navigate here: https://plantie-care.klestova.nl/
 To access API documentation, please, check out this link: https://plantie-care-api.klestova.nl/docs#/.
 
 I want to say thank you to the two senior software engineers who reviewed my code and gave insights on how to make it cleaner, more readable and more maintainable, I spent one whole evening to refactor:D
