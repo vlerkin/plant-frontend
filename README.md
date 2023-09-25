@@ -12,7 +12,7 @@ For code delivery I used docker containers (also for development), the project i
 To access the app, please, navigate here: https://plantie-care.klestova.nl/
 To access API documentation, please, check out this link: https://plantie-care-api.klestova.nl/docs#/.
 
-I want to say thank you to the two senior software engineers who reviewed my code and gave insights on how to make it cleaner, more readable and more maintainable, I spent one whole evening to refactor:D
+I want to say thank you to https://github.com/ixth who reviewed my code and gave insights on how to make it cleaner, more readable and more maintainable, I spent one whole evening to refactor:D
 
 ## Frontend Technologies
 The frontend part of the project is built using Next.js (React) and TypeScript, data validation is performed with Zod, Axios is used as http client, Tailwind is chosen for styling, QR codes are generated using next-qrcode package, the project also contains shadcn UI components and simple framer motion animation.
