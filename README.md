@@ -16,12 +16,12 @@ I want to say thank you to [@ixth](https://github.com/ixth) who reviewed my code
 
 ## What functionality the app has
 In PlantieCare you can:  
-1. Create a user and log into the app (register and login), you can add your photo and edit perdonal info in your account;  
+1. Create a user and log into the app (register and login), you can add your photo and edit personal info in your account;  
 2. Add plant cards with instructions about plant care, add a photo, edit plant info or delete a plant;  
 3. Add watering, fertilisers and diseases with treatment or without;  
 4. You can see all plants on my-plants page or navigate to a page of a specific plant to read/add more info;  
 5. In your profile, you can add permissions to access your plants for caretakers and manage them;  
-6. You can share access via QR code or link, the caretaker will be authorized with the given credentials, caretaker does not need to register. If a caretaker is already a user of the app, they will be logged out and authorized with the new credentials and limited access to your plants.  
+6. You can share access via QR code or link, the caretaker will be authorized with the given credentials, caretaker does not need to register. If a caretaker is already a user of the app, they will be logged out and authorised with the new credentials, granting them limited access to your plants. Limited access means they can only log watering activities, and nothing else.
 
 ## Frontend Technologies
 The frontend part of the project is built using Next.js (React) and TypeScript, data validation is performed with Zod, Axios is used as http client, Tailwind is chosen for styling, QR codes are generated using next-qrcode package, the project also contains shadcn UI components and simple framer motion animation.
